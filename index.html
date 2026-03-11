@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
 <meta charset="UTF-8">
 <title>GAMEOVER Futebol</title>
@@ -7,69 +7,136 @@
 <style>
 
 body{
-font-family:Arial;
+font-family: Arial;
 background:#0f172a;
 color:white;
 text-align:center;
+padding:20px;
+}
+
+h1{
+color:#22c55e;
+}
+
+.container{
+max-width:700px;
+margin:auto;
+background:#1e293b;
+padding:20px;
+border-radius:10px;
 }
 
 .card{
-background:white;
-color:black;
-padding:20px;
-border-radius:10px;
-margin:20px auto;
-width:350px;
+background:#334155;
+padding:15px;
+margin:10px 0;
+border-radius:8px;
 }
 
 button{
-padding:10px 20px;
-font-size:16px;
-background:#16a34a;
-color:white;
+background:#22c55e;
 border:none;
-border-radius:5px;
+padding:10px 15px;
+border-radius:6px;
+cursor:pointer;
+font-weight:bold;
+}
+
+button:hover{
+background:#16a34a;
+}
+
+ul{
+list-style:none;
+padding:0;
+}
+
+.pix{
+background:#020617;
+padding:10px;
+border-radius:6px;
+word-break:break-all;
+margin-bottom:10px;
 }
 
 </style>
+
+<script>
+
+function copiarPix(){
+
+const pix = document.getElementById("pixcode").innerText;
+
+navigator.clipboard.writeText(pix);
+
+alert("PIX copiado!");
+
+}
+
+</script>
 
 </head>
 
 <body>
 
 <h1>⚽ GAMEOVER</h1>
+<p>Todo sábado às 18h</p>
+
+<div class="container">
 
 <div class="card">
 
-<h2>💰 Pagamento Pix</h2>
+<h2>💰 Financeiro</h2>
 
-<p>Mensalidade: <b>R$ 28</b></p>
+<p>Mensalidade: <b>R$ 28,00</b></p>
+<p>Participantes: <b>18</b></p>
 
-<input type="text" value="SUA_CHAVE_PIX" id="pix" readonly>
-
-<br><br>
-
-<button onclick="copiar()">📋 Copiar Pix</button>
-
-<p id="msg"></p>
+<p>Entradas: <b>R$ 308</b></p>
+<p>Saldo: <b>R$ 308</b></p>
 
 </div>
 
-<script>
+<div class="card">
 
-function copiar(){
+<h2>👥 Jogadores</h2>
 
-let pix=document.getElementById("pix")
+<ul>
 
-pix.select()
+<li>Peterson ✅</li>
+<li>Danilo ✅</li>
+<li>Joaquim ✅</li>
+<li>Juan ✅</li>
+<li>Tulio ✅</li>
 
-navigator.clipboard.writeText(pix.value)
+<li>Albert ⏳</li>
+<li>Marcos ⏳</li>
+<li>Pedro ⏳</li>
+<li>Lucas ⏳</li>
+<li>Rafael ⏳</li>
 
-document.getElementById("msg").innerHTML="✅ Pix copiado!"
+</ul>
 
-}
+</div>
 
-</script>
+<div class="card">
+
+<h2>📲 Pagamento PIX</h2>
+
+<div class="pix" id="pixcode">
+
+00020126580014BR.GOV.BCB.PIX0136SEU-PIX-AQUI520400005303986540528.005802BR5925GAMEOVER6009SAOPAULO62070503***6304ABCD
+
+</div>
+
+<button onclick="copiarPix()">
+
+Copiar PIX
+
+</button>
+
+</div>
+
+</div>
 
 </body>
 </html>
