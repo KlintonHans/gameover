@@ -1,22 +1,175 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
+
 <head>
-<title>GAMEOVER</title>
+<meta charset="UTF-8">
+<title>GAMEOVER Futebol</title>
+
+<style>
+
+body{
+font-family: Arial, sans-serif;
+color:white;
+text-align:center;
+padding:40px;
+
+/* imagem de campo de futebol */
+background-image:url("https://images.unsplash.com/photo-1508098682722-e99c643e7f0b");
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+}
+
+.container{
+max-width:700px;
+margin:auto;
+background:rgba(0,0,0,0.75);
+padding:30px;
+border-radius:12px;
+}
+
+h1{
+color:#22c55e;
+}
+
+h2{
+margin-top:30px;
+}
+
+.linha{
+margin:6px 0;
+}
+
+.separador{
+margin:25px 0;
+border-top:1px solid #555;
+}
+
+.pago{
+color:#22c55e;
+}
+
+.pendente{
+color:#facc15;
+}
+
+.pix{
+background:#111;
+padding:10px;
+border-radius:6px;
+display:inline-block;
+margin-top:10px;
+}
+
+button{
+margin-top:10px;
+padding:10px 15px;
+border:none;
+border-radius:6px;
+background:#22c55e;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+background:#16a34a;
+}
+
+</style>
+
 </head>
 
-<body style="font-family:Arial; text-align:center; background:#0f172a; color:white; padding:40px;">
+<body>
 
-<h1>⚽ GAMEOVER</h1>
+<div class="container">
 
-<h2>Financeiro</h2>
+<h1>⚽ GAMEOVER – TODO SÁBADO 18H00</h1>
 
-<p>Mensalidade: R$ 28</p>
+<p>💰 Mensalidade jogador: <b>R$ 28,00</b></p>
+<p>👥 Participantes: <b>18 jogadores</b></p>
 
-<p>Jogadores: 18</p>
+<div class="separador"></div>
 
-<p>Pagaram: 17</p>
+<h2>📊 FINANCEIRO</h2>
 
-<p>Total arrecadado: R$ 476</p>
+<p>💵 Entradas (Mensalidades)</p>
+<p><b>17 jogadores pagos → R$ 476,00</b></p>
+
+<p>💸 Saídas</p>
+<p>Taxa reserva quadra → <b>R$ 55,00</b></p>
+
+<p>💰 Saldo em Caixa</p>
+<h2>R$ 421,00</h2>
+
+<p>(17 de 18 pagamentos)</p>
+
+<div class="separador"></div>
+
+<h2>🏟 Informações da Quadra</h2>
+
+<p>Valor mensal da quadra: <b>R$ 400,00</b></p>
+<p>Taxa de reserva já paga: <b>R$ 55,00</b></p>
+
+<h2>📅 Vencimentos</h2>
+
+<p>Completar <b>R$ 345,00</b> da quadra: <b>13/03</b></p>
+<p>Próxima mensalidade da quadra: <b>10/04</b></p>
+
+<div class="separador"></div>
+
+<h2>🟢 Pagamentos Confirmados</h2>
+
+<p class="pago">✔ Alessandro</p>
+<p class="pago">✔ Rones</p>
+<p class="pago">✔ Wildson</p>
+<p class="pago">✔ Samuel</p>
+<p class="pago">✔ Robert W.</p>
+<p class="pago">✔ Getulio</p>
+<p class="pago">✔ Lucas</p>
+<p class="pago">✔ H. Robert</p>
+<p class="pago">✔ Klinton</p>
+<p class="pago">✔ Cleveson</p>
+<p class="pago">✔ Farley</p>
+<p class="pago">✔ Jefferson</p>
+<p class="pago">✔ Peterson</p>
+<p class="pago">✔ Danilo</p>
+<p class="pago">✔ Joaquim</p>
+<p class="pago">✔ Juan</p>
+<p class="pago">✔ Tulio</p>
+
+<h2>⏳ Pagamentos Pendentes</h2>
+
+<p class="pendente">• Albert</p>
+
+<div class="separador"></div>
+
+<h2>📌 Favor enviar o Pix de R$ 28,00 da mensalidade</h2>
+
+<p>💳 Chave Pix:</p>
+
+<div class="pix" id="pix">
+31992391153
+</div>
+
+<br>
+
+<button onclick="copiarPix()">Copiar PIX</button>
+
+</div>
+
+<script>
+
+function copiarPix(){
+
+const pix = document.getElementById("pix").innerText;
+
+navigator.clipboard.writeText(pix);
+
+alert("PIX copiado!");
+
+}
+
+</script>
 
 </body>
 </html>
