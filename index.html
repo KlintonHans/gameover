@@ -3,42 +3,67 @@
 
 <head>
 <meta charset="UTF-8">
-<title>GAMEOVER Futebol</title>
+<title>GAMEOVER Dashboard</title>
 
 <style>
 
 body{
 font-family: Arial, sans-serif;
+margin:0;
 color:white;
-text-align:center;
-padding:40px;
 
-/* Fundo campo de futebol */
+/* fundo campo */
 background-image:url("https://upload.wikimedia.org/wikipedia/commons/5/5a/Soccer_field_-_empty.jpg");
 background-size:cover;
 background-position:center;
 background-attachment:fixed;
 }
 
-.container{
-max-width:700px;
-margin:auto;
+.overlay{
 background:rgba(0,0,0,0.75);
-padding:30px;
-border-radius:12px;
+min-height:100vh;
+padding:40px;
 }
 
 h1{
+text-align:center;
+color:#22c55e;
+margin-bottom:10px;
+}
+
+.subtitle{
+text-align:center;
+margin-bottom:40px;
+}
+
+.dashboard{
+max-width:1100px;
+margin:auto;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+}
+
+.card{
+background:#111827;
+padding:20px;
+border-radius:12px;
+box-shadow:0 0 10px rgba(0,0,0,0.5);
+}
+
+.card h2{
+margin-top:0;
 color:#22c55e;
 }
 
-h2{
-margin-top:30px;
+.valor{
+font-size:28px;
+font-weight:bold;
+margin-top:10px;
 }
 
-.separador{
-margin:25px 0;
-border-top:1px solid #555;
+.lista{
+margin-top:10px;
 }
 
 .pago{
@@ -49,11 +74,10 @@ color:#22c55e;
 color:#facc15;
 }
 
-.pix{
-background:#111;
+.pixbox{
+background:#000;
 padding:10px;
 border-radius:6px;
-display:inline-block;
 margin-top:10px;
 }
 
@@ -71,85 +95,99 @@ button:hover{
 background:#16a34a;
 }
 
-</style>
+.info{
+line-height:1.6;
+}
 
+</style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="overlay">
 
-<h1>⚽ GAMEOVER – TODO SÁBADO 18H00</h1>
+<h1>⚽ GAMEOVER</h1>
+<p class="subtitle">Pelada todo sábado às 18h</p>
 
-<p>💰 Mensalidade jogador: <b>R$ 28,00</b></p>
-<p>👥 Participantes: <b>18 jogadores</b></p>
+<div class="dashboard">
 
-<div class="separador"></div>
+<div class="card">
+<h2>💰 Entradas</h2>
+<p>17 jogadores pagos</p>
+<div class="valor">R$ 476</div>
+</div>
 
-<h2>📊 FINANCEIRO</h2>
+<div class="card">
+<h2>💸 Saídas</h2>
+<p>Taxa reserva quadra</p>
+<div class="valor">R$ 55</div>
+</div>
 
-<p>💵 Entradas (Mensalidades)</p>
-<p><b>17 jogadores pagos → R$ 476,00</b></p>
+<div class="card">
+<h2>🏦 Saldo</h2>
+<p>17 de 18 pagamentos</p>
+<div class="valor">R$ 421</div>
+</div>
 
-<p>💸 Saídas</p>
-<p>Taxa reserva quadra → <b>R$ 55,00</b></p>
+<div class="card">
+<h2>🏟 Quadra</h2>
+<div class="info">
+Valor mensal: R$ 400<br>
+Reserva paga: R$ 55
+</div>
+</div>
 
-<p>💰 Saldo em Caixa</p>
-<h2>R$ 421,00</h2>
-
-<p>(17 de 18 pagamentos)</p>
-
-<div class="separador"></div>
-
-<h2>🏟 Informações da Quadra</h2>
-
-<p>Valor mensal da quadra: <b>R$ 400,00</b></p>
-<p>Taxa de reserva já paga: <b>R$ 55,00</b></p>
-
+<div class="card">
 <h2>📅 Vencimentos</h2>
+<div class="info">
+Completar R$ 345 → 13/03<br>
+Próxima mensalidade → 10/04
+</div>
+</div>
 
-<p>Completar <b>R$ 345,00</b> da quadra: <b>13/03</b></p>
-<p>Próxima mensalidade da quadra: <b>10/04</b></p>
-
-<div class="separador"></div>
-
+<div class="card">
 <h2>🟢 Pagamentos Confirmados</h2>
+<div class="lista pago">
+✔ Alessandro<br>
+✔ Rones<br>
+✔ Wildson<br>
+✔ Samuel<br>
+✔ Robert W.<br>
+✔ Getulio<br>
+✔ Lucas<br>
+✔ H. Robert<br>
+✔ Klinton<br>
+✔ Cleveson<br>
+✔ Farley<br>
+✔ Jefferson<br>
+✔ Peterson<br>
+✔ Danilo<br>
+✔ Joaquim<br>
+✔ Juan<br>
+✔ Tulio
+</div>
+</div>
 
-<p class="pago">✔ Alessandro</p>
-<p class="pago">✔ Rones</p>
-<p class="pago">✔ Wildson</p>
-<p class="pago">✔ Samuel</p>
-<p class="pago">✔ Robert W.</p>
-<p class="pago">✔ Getulio</p>
-<p class="pago">✔ Lucas</p>
-<p class="pago">✔ H. Robert</p>
-<p class="pago">✔ Klinton</p>
-<p class="pago">✔ Cleveson</p>
-<p class="pago">✔ Farley</p>
-<p class="pago">✔ Jefferson</p>
-<p class="pago">✔ Peterson</p>
-<p class="pago">✔ Danilo</p>
-<p class="pago">✔ Joaquim</p>
-<p class="pago">✔ Juan</p>
-<p class="pago">✔ Tulio</p>
+<div class="card">
+<h2>⏳ Pendente</h2>
+<div class="pendente">
+Albert
+</div>
+</div>
 
-<h2>⏳ Pagamentos Pendentes</h2>
+<div class="card">
+<h2>💳 Pix Mensalidade</h2>
+<p>Enviar R$ 28</p>
 
-<p class="pendente">• Albert</p>
-
-<div class="separador"></div>
-
-<h2>📌 Favor enviar o Pix de R$ 28,00 da mensalidade</h2>
-
-<p>💳 Chave Pix:</p>
-
-<div class="pix" id="pix">
+<div class="pixbox" id="pix">
 31992391153
 </div>
 
-<br>
-
 <button onclick="copiarPix()">Copiar PIX</button>
+
+</div>
+
+</div>
 
 </div>
 
