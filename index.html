@@ -1,9 +1,9 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
 <meta charset="UTF-8">
-<title>GAMEOVER Dashboard</title>
+<title>GAMEOVER - Gestão do Futebol</title>
 
 <style>
 
@@ -12,7 +12,7 @@ font-family: Arial, sans-serif;
 margin:0;
 color:white;
 
-/* fundo campo */
+/* fundo campo futebol */
 background-image:url("https://upload.wikimedia.org/wikipedia/commons/5/5a/Soccer_field_-_empty.jpg");
 background-size:cover;
 background-position:center;
@@ -25,15 +25,28 @@ min-height:100vh;
 padding:40px;
 }
 
-h1{
-text-align:center;
-color:#22c55e;
-margin-bottom:10px;
+.topo{
+display:flex;
+justify-content:space-between;
+align-items:center;
+max-width:1100px;
+margin:auto;
+margin-bottom:30px;
 }
 
-.subtitle{
-text-align:center;
-margin-bottom:40px;
+.logo{
+font-size:24px;
+font-weight:bold;
+}
+
+.btnAdd{
+background:#22c55e;
+border:none;
+padding:10px 18px;
+border-radius:6px;
+color:white;
+cursor:pointer;
+font-weight:bold;
 }
 
 .dashboard{
@@ -44,166 +57,36 @@ grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
 gap:20px;
 }
 
+/* cards financeiros */
 .card{
-background:#111827;
+background:rgba(30,41,59,0.95);
 padding:20px;
 border-radius:12px;
-box-shadow:0 0 10px rgba(0,0,0,0.5);
+box-shadow:0 5px 15px rgba(0,0,0,0.4);
 }
 
-.card h2{
+.card h3{
 margin-top:0;
 color:#22c55e;
 }
 
 .valor{
-font-size:28px;
+font-size:32px;
 font-weight:bold;
 margin-top:10px;
+}
+
+/* seções maiores */
+.section{
+grid-column:span 2;
+background:rgba(30,41,59,0.95);
+padding:20px;
+border-radius:12px;
 }
 
 .lista{
 margin-top:10px;
-}
+line-h
+```
 
-.pago{
-color:#22c55e;
-}
-
-.pendente{
-color:#facc15;
-}
-
-.pixbox{
-background:#000;
-padding:10px;
-border-radius:6px;
-margin-top:10px;
-}
-
-button{
-margin-top:10px;
-padding:10px 15px;
-border:none;
-border-radius:6px;
-background:#22c55e;
-font-weight:bold;
-cursor:pointer;
-}
-
-button:hover{
-background:#16a34a;
-}
-
-.info{
-line-height:1.6;
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="overlay">
-
-<h1>⚽ GAMEOVER</h1>
-<p class="subtitle">Pelada todo sábado às 18h</p>
-
-<div class="dashboard">
-
-<div class="card">
-<h2>💰 Entradas</h2>
-<p>17 jogadores pagos</p>
-<div class="valor">R$ 476</div>
-</div>
-
-<div class="card">
-<h2>💸 Saídas</h2>
-<p>Taxa reserva quadra</p>
-<div class="valor">R$ 55</div>
-</div>
-
-<div class="card">
-<h2>🏦 Saldo</h2>
-<p>17 de 18 pagamentos</p>
-<div class="valor">R$ 421</div>
-</div>
-
-<div class="card">
-<h2>🏟 Quadra</h2>
-<div class="info">
-Valor mensal: R$ 400<br>
-Reserva paga: R$ 55
-</div>
-</div>
-
-<div class="card">
-<h2>📅 Vencimentos</h2>
-<div class="info">
-Completar R$ 345 → 13/03<br>
-Próxima mensalidade → 10/04
-</div>
-</div>
-
-<div class="card">
-<h2>🟢 Pagamentos Confirmados</h2>
-<div class="lista pago">
-✔ Alessandro<br>
-✔ Rones<br>
-✔ Wildson<br>
-✔ Samuel<br>
-✔ Robert W.<br>
-✔ Getulio<br>
-✔ Lucas<br>
-✔ H. Robert<br>
-✔ Klinton<br>
-✔ Cleveson<br>
-✔ Farley<br>
-✔ Jefferson<br>
-✔ Peterson<br>
-✔ Danilo<br>
-✔ Joaquim<br>
-✔ Juan<br>
-✔ Tulio
-</div>
-</div>
-
-<div class="card">
-<h2>⏳ Pendente</h2>
-<div class="pendente">
-Albert
-</div>
-</div>
-
-<div class="card">
-<h2>💳 Pix Mensalidade</h2>
-<p>Enviar R$ 28</p>
-
-<div class="pixbox" id="pix">
-31992391153
-</div>
-
-<button onclick="copiarPix()">Copiar PIX</button>
-
-</div>
-
-</div>
-
-</div>
-
-<script>
-
-function copiarPix(){
-
-const pix = document.getElementById("pix").innerText;
-
-navigator.clipboard.writeText(pix);
-
-alert("PIX copiado!");
-
-}
-
-</script>
-
-</body>
-</html>
+  
