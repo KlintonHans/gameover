@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>GAMEOVER Futebol</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+}
+
+.card{
+background:white;
+color:black;
+padding:20px;
+border-radius:10px;
+margin:20px auto;
+width:350px;
+}
+
+button{
+padding:10px 20px;
+font-size:16px;
+background:#16a34a;
+color:white;
+border:none;
+border-radius:5px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>⚽ GAMEOVER</h1>
+
+<div class="card">
+
+<h2>💰 Pagamento Pix</h2>
+
+<p>Mensalidade: <b>R$ 28</b></p>
+
+<input type="text" value="SUA_CHAVE_PIX" id="pix" readonly>
+
+<br><br>
+
+<button onclick="copiar()">📋 Copiar Pix</button>
+
+<p id="msg"></p>
+
+</div>
+
+<script>
+
+function copiar(){
+
+let pix=document.getElementById("pix")
+
+pix.select()
+
+navigator.clipboard.writeText(pix.value)
+
+document.getElementById("msg").innerHTML="✅ Pix copiado!"
+
+}
+
+</script>
+
+</body>
+</html>
