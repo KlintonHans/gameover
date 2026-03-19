@@ -5,33 +5,23 @@
 <title>GAMEOVER Dashboard</title>
 
 <style>
-
-*{
-box-sizing:border-box;
-}
+*{ box-sizing:border-box; }
 
 body{
 margin:0;
 font-family:Arial, Helvetica, sans-serif;
 color:white;
-
-/* fundo campo usando sua imagem */
-
 background-image:url("fut.jpg");
 background-size:cover;
 background-position:center;
 background-attachment:fixed;
 }
 
-/* camada escura para leitura */
-
 .overlay{
 background:rgba(0,0,0,0.80);
 min-height:100vh;
 padding:40px;
 }
-
-/* topo */
 
 .topbar{
 display:flex;
@@ -48,8 +38,6 @@ font-weight:bold;
 color:#22c55e;
 }
 
-/* dashboard */
-
 .dashboard{
 max-width:1100px;
 margin:auto;
@@ -58,19 +46,19 @@ grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
 gap:20px;
 }
 
-/* cards */
-
-.card{
+.card, .section{
 background:#1e293b;
 padding:20px;
 border-radius:12px;
 box-shadow:0 10px 20px rgba(0,0,0,0.5);
 }
 
-.card h3{
-margin-top:0;
-color:#22c55e;
+.section{
+grid-column:span 2;
+overflow-x:auto;
 }
+
+.card h3{ margin-top:0; color:#22c55e; }
 
 .valor{
 font-size:34px;
@@ -78,32 +66,25 @@ font-weight:bold;
 margin-top:10px;
 }
 
-/* seção grande */
-
-.section{
-grid-column:span 2;
-background:#1e293b;
-padding:20px;
-border-radius:12px;
-box-shadow:0 10px 20px rgba(0,0,0,0.5);
-}
-
-/* lista */
-
-.lista{
+table{
+width:100%;
+border-collapse:collapse;
 margin-top:10px;
-line-height:1.9;
 }
 
-.pago{
-color:#22c55e;
+th, td{
+padding:8px;
+text-align:center;
+border-bottom:1px solid #334155;
 }
 
-.pendente{
-color:#facc15;
-}
+th{ color:#22c55e; }
 
-/* barra progresso */
+.nome{ text-align:left; cursor:pointer; }
+
+.pago{ color:#22c55e; }
+
+.presenca{ cursor:pointer; font-weight:bold; }
 
 .progress{
 background:#111;
@@ -114,12 +95,10 @@ margin-top:10px;
 
 .progress-bar{
 height:100%;
-width:100%;
 background:#22c55e;
 border-radius:20px;
+width:0%;
 }
-
-/* pix */
 
 .pixbox{
 background:black;
@@ -131,7 +110,7 @@ font-size:16px;
 
 button{
 margin-top:10px;
-padding:12px 18px;
+padding:8px 12px;
 border:none;
 border-radius:6px;
 background:#22c55e;
@@ -140,20 +119,15 @@ font-weight:bold;
 cursor:pointer;
 }
 
-button:hover{
-background:#16a34a;
+button:hover{ background:#16a34a; }
+
+a{
+color:#22c55e;
+cursor:pointer;
+text-decoration:none;
 }
 
-/* mobile */
-
-@media(max-width:800px){
-
-.section{
-grid-column:span 1;
-}
-
-}
-
+a:hover{ text-decoration:underline; }
 </style>
 </head>
 
@@ -170,72 +144,58 @@ grid-column:span 1;
 
 <div class="card">
 <h3>💰 Entradas</h3>
-<div class="valor">R$ 504</div>
-<p>18 pagamentos</p>
+<div class="valor" id="entrada">R$ 0</div>
+<p id="qtdPagamentos">0 pagamentos</p>
+<button onclick="addEntrada()">+ Entrada</button>
 </div>
 
 <div class="card">
 <h3>💸 Saídas</h3>
-<div class="valor">R$ 55</div>
-<p>Reserva quadra</p>
+<div class="valor" id="saida">R$ </div>
+<p id="ultimaSaida">Sem saídas</p>
+<button onclick="addSaida()">+ Saída</button>
 </div>
 
 <div class="card">
 <h3>🏦 Saldo</h3>
-<div class="valor">R$ 449</div>
-<p>18 de 18 pagos</p>
+<div class="valor" id="saldo">R$ 0</div>
+<p id="statusPagamentos">0 de 0 pagos</p>
+
+<p>
+<a onclick="abrirExtrato()">Ver histórico</a>
+</p>
+
 </div>
 
 <div class="card">
 <h3>📊 Pagamentos</h3>
-<p>100% concluído</p>
-
+<p id="percentual">0%</p>
 <div class="progress">
-<div class="progress-bar"></div>
+<div class="progress-bar" id="barra"></div>
 </div>
-
-</div>
-
-<div class="section">
-
-<h3>👥 Jogadores</h3>
-
-<div class="lista">
-
-<div class="pago">✔ Alessandro</div>
-<div class="pago">✔ Rones</div>
-<div class="pago">✔ Wildson</div>
-<div class="pago">✔ Samuel</div>
-<div class="pago">✔ Robert W.</div>
-<div class="pago">✔ Getulio</div>
-<div class="pago">✔ Lucas</div>
-<div class="pago">✔ H. Robert</div>
-<div class="pago">✔ Klinton</div>
-<div class="pago">✔ Cleveson</div>
-<div class="pago">✔ Farley</div>
-<div class="pago">✔ Jefferson</div>
-<div class="pago">✔ Peterson</div>
-<div class="pago">✔ Danilo</div>
-<div class="pago">✔ Joaquim</div>
-<div class="pago">✔ Juan</div>
-<div class="pago">✔ Tulio</div>
-<div class="pago">✔ Albert</div>
-
-</div>
-
 </div>
 
 <div class="section">
+<h3>👥 Jogadores / Presença</h3>
+<button onclick="adicionarJogador()">+ Adicionar Jogador</button>
 
+<table id="tabela">
+<tr>
+<th class="nome">Jogador</th>
+<th>14/03</th>
+<th>21/03</th>
+<th>28/03</th>
+<th>04/04</th>
+<th>Ação</th>
+</tr>
+</table>
+</div>
+
+<div class="section">
 <h3>🏟 Informações da Quadra</h3>
 
-<p>Valor mensal: <b>R$ 400</b></p>
-<p>Reserva paga: <b>R$ 55</b></p>
-
-<br>
-
-<p>Completar <b>R$ 345</b> até <b>13/03</b></p>
-<p>Próxima mensalidade <b>10/04</b></p>
+<p>Custo mensal quadra: <b>R$ 400</b></p>
+<p>Próximo vencimento: <b>10/04</b></p>
 
 <br>
 
@@ -243,30 +203,244 @@ grid-column:span 1;
 
 <p>Valor: R$ 28</p>
 
-<div class="pixbox" id="pix">
-31992391153
-</div>
+<div class="pixbox" id="pix">31992391153</div>
 
 <button onclick="copiarPix()">Copiar Pix</button>
-
 </div>
 
 </div>
+</div>
+
+<!-- MODAL -->
+<div id="modalExtrato" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.9);
+padding:30px;
+overflow:auto;
+z-index:999;
+">
+
+<h2>📊 Histórico do Caixa</h2>
+<div id="listaExtrato"></div>
+<br>
+<button onclick="fecharExtrato()">Fechar</button>
 
 </div>
 
 <script>
 
-function copiarPix(){
+const mensalidade = 28;
+const custoQuadra = 0;
 
-const pix = document.getElementById("pix").innerText;
+// CARREGAR CAIXA
+let caixa = JSON.parse(localStorage.getItem("caixaExtra")) || {
+entrada: 0,
+saida: 0,
+ultimaSaida: "",
+historico: []
+};
 
-navigator.clipboard.writeText(pix);
-
-alert("Pix copiado!");
-
+// GARANTE HISTÓRICO
+if(!caixa.historico){
+caixa.historico = [];
 }
+
+let dados = JSON.parse(localStorage.getItem("gameover")) || { jogadores: [] };
+
+function salvar(){
+localStorage.setItem("gameover", JSON.stringify(dados));
+localStorage.setItem("caixaExtra", JSON.stringify(caixa));
+}
+
+// ENTRADA
+function addEntrada(){
+
+let valor = parseFloat(prompt("Valor da entrada:"));
+
+if(isNaN(valor) || valor <= 0){
+alert("Digite um valor válido");
+return;
+}
+
+caixa.entrada += valor;
+
+caixa.historico.push({
+tipo:"entrada",
+valor:valor,
+data:new Date().toLocaleString()
+});
+
+salvar();
+atualizarFinanceiro();
+}
+
+// SAÍDA
+function addSaida(){
+
+let descricao = prompt("Descrição da saída:");
+let valor = parseFloat(prompt("Valor da saída:"));
+
+if(isNaN(valor) || valor <= 0){
+alert("Digite um valor válido");
+return;
+}
+
+caixa.saida += valor;
+
+caixa.ultimaSaida = (descricao || "Saída") + " - R$ " + valor;
+
+caixa.historico.push({
+tipo:"saida",
+valor:valor,
+descricao:descricao,
+data:new Date().toLocaleString()
+});
+
+salvar();
+atualizarFinanceiro();
+}
+
+// EXTRATO
+function abrirExtrato(){
+
+let div = document.getElementById("listaExtrato");
+div.innerHTML = "";
+
+if(!caixa.historico.length){
+div.innerHTML = "<p>Sem movimentações</p>";
+}else{
+
+caixa.historico.slice().reverse().forEach(item=>{
+
+let p = document.createElement("p");
+
+if(item.tipo === "entrada"){
+p.innerHTML = "🟢 Entrada: R$ " + item.valor + "<br><small>"+item.data+"</small>";
+}else{
+p.innerHTML = "🔴 Saída: " + (item.descricao || "") + " - R$ " + item.valor + "<br><small>"+item.data+"</small>";
+}
+
+div.appendChild(p);
+
+});
+}
+
+document.getElementById("modalExtrato").style.display = "block";
+}
+
+function fecharExtrato(){
+document.getElementById("modalExtrato").style.display = "none";
+}
+
+// RESTANTE
+function sincronizar(){
+dados.jogadores = [];
+document.querySelectorAll(".jogador").forEach(el=>{
+dados.jogadores.push({
+nome: el.textContent.replace("✔ ",""),
+pago: el.classList.contains("pago")
+});
+});
+salvar();
+}
+
+function carregarJogadores(){
+let tabela = document.getElementById("tabela");
+dados.jogadores.forEach(j=>{
+let tr = document.createElement("tr");
+tr.innerHTML = `
+<td class="nome jogador ${j.pago ? 'pago' : ''}">${j.pago ? '✔ ' : ''}${j.nome}</td>
+<td class="presenca">-</td>
+<td class="presenca">-</td>
+<td class="presenca">-</td>
+<td class="presenca">-</td>
+<td><button onclick="removerJogador(this)">X</button></td>`;
+tabela.appendChild(tr);
+});
+}
+
+function ativarEventos(){
+document.querySelectorAll(".jogador").forEach(el=>{
+el.onclick = ()=>{
+el.classList.toggle("pago");
+let nome = el.textContent.replace("✔ ","");
+el.textContent = el.classList.contains("pago") ? "✔ "+nome : nome;
+sincronizar();
+atualizarFinanceiro();
+};
+});
+}
+
+function atualizarFinanceiro(){
+
+let total=0, pagos=0;
+document.querySelectorAll(".jogador").forEach(el=>{
+if(el.classList.contains("pago")){
+total+=mensalidade;
+pagos++;
+}
+});
+
+let entradaTotal = total + caixa.entrada;
+let saidaTotal = custoQuadra + caixa.saida;
+
+document.getElementById("entrada").innerText = "R$ "+entradaTotal;
+document.getElementById("saida").innerText = "R$ "+saidaTotal;
+document.getElementById("saldo").innerText = "R$ "+(entradaTotal - saidaTotal);
+
+document.getElementById("qtdPagamentos").innerText = pagos+" pagamentos";
+document.getElementById("statusPagamentos").innerText = pagos+" de "+document.querySelectorAll(".jogador").length+" pagos";
+
+document.getElementById("ultimaSaida").innerText = caixa.ultimaSaida || "Sem saídas";
+
+let percent = Math.round((pagos/(document.querySelectorAll(".jogador").length||1))*100);
+document.getElementById("percentual").innerText = percent+"%";
+document.getElementById("barra").style.width = percent+"%";
+}
+
+function adicionarJogador(){
+let nome = prompt("Nome do jogador:");
+if(!nome) return;
+
+let tr = document.createElement("tr");
+tr.innerHTML = `
+<td class="nome jogador">${nome}</td>
+<td class="presenca">-</td>
+<td class="presenca">-</td>
+<td class="presenca">-</td>
+<td class="presenca">-</td>
+<td><button onclick="removerJogador(this)">X</button></td>`;
+document.getElementById("tabela").appendChild(tr);
+
+ativarEventos();
+sincronizar();
+atualizarFinanceiro();
+}
+
+function removerJogador(btn){
+if(!confirm("Remover jogador?")) return;
+btn.closest("tr").remove();
+ativarEventos();
+sincronizar();
+atualizarFinanceiro();
+}
+
+function copiarPix(){
+navigator.clipboard.writeText(document.getElementById("pix").innerText);
+alert("Pix copiado!");
+}
+
+// INIT
+carregarJogadores();
+ativarEventos();
+atualizarFinanceiro();
 
 </script>
 
 </body>
+</html>
