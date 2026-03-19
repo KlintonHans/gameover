@@ -44,12 +44,14 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// 🔥 CONFIG FIREBASE (SUBSTITUIR)
+// 🔥 SEU FIREBASE CONFIG (JÁ COLOCADO)
 const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_DOMINIO",
-  projectId: "SEU_PROJECT_ID",
-  appId: "SEU_APP_ID"
+  apiKey: "AIzaSyCXfa8We_LZvheRJW763NRUfPqryqg84YA",
+  authDomain: "klintonhansgameover.firebaseapp.com",
+  projectId: "klintonhansgameover",
+  storageBucket: "klintonhansgameover.firebasestorage.app",
+  messagingSenderId: "456440883345",
+  appId: "1:456440883345:web:0130c2c5874a1dd29f3730"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -64,6 +66,7 @@ window.login = async function () {
   try {
     await signInWithEmailAndPassword(auth, email, senha);
     alert("Logado com sucesso!");
+    carregarJogadores(); // atualiza após login
   } catch (e) {
     alert("Erro no login");
     console.error(e);
