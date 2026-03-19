@@ -9,8 +9,14 @@
 
 <h2>⚽ GameOver</h2>
 
-<!-- LOGIN -->
-<div id="login-area">
+<!-- BOTÃO SECRETO ADMIN -->
+<button onclick="mostrarLogin()" 
+style="position:fixed; bottom:10px; right:10px;">
+⚙️
+</button>
+
+<!-- LOGIN (ESCONDIDO) -->
+<div id="login-area" style="display:none;">
   <input type="email" id="email" placeholder="Email">
   <input type="password" id="senha" placeholder="Senha">
   <button onclick="login()">Entrar</button>
@@ -44,7 +50,7 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// 🔥 SEU FIREBASE CONFIG (JÁ COLOCADO)
+// 🔥 SEU FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyCXfa8We_LZvheRJW763NRUfPqryqg84YA",
   authDomain: "klintonhansgameover.firebaseapp.com",
@@ -58,15 +64,21 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// LOGIN
+// MOSTRAR LOGIN (BOTÃO ⚙️)
+window.mostrarLogin = function () {
+  const area = document.getElementById("login-area");
+  area.style.display = area.style.display === "none" ? "block" : "none";
+};
+
+// LOGIN ADMIN
 window.login = async function () {
   const email = document.getElementById("email").value;
   const senha = document.getElementById("senha").value;
 
   try {
     await signInWithEmailAndPassword(auth, email, senha);
-    alert("Logado com sucesso!");
-    carregarJogadores(); // atualiza após login
+    alert("Logado como admin!");
+    carregarJogadores();
   } catch (e) {
     alert("Erro no login");
     console.error(e);
@@ -83,7 +95,7 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-// LISTAR JOGADORES
+// LISTAR JOGADORES (VISITANTE + ADMIN)
 async function carregarJogadores() {
   const lista = document.getElementById("lista");
   lista.innerHTML = "";
@@ -108,7 +120,7 @@ async function carregarJogadores() {
   });
 }
 
-// ADICIONAR JOGADOR
+// ADICIONAR
 window.addJogador = async function () {
   const nome = prompt("Nome do jogador:");
   if (!nome) return;
@@ -121,7 +133,7 @@ window.addJogador = async function () {
   carregarJogadores();
 };
 
-// MARCAR PAGAMENTO
+// PAGAR
 window.pagar = async function (id, statusAtual) {
   const ref = doc(db, "jogadores", id);
 
@@ -132,13 +144,13 @@ window.pagar = async function (id, statusAtual) {
   carregarJogadores();
 };
 
-// REMOVER JOGADOR
+// REMOVER
 window.remover = async function (id) {
   await deleteDoc(doc(db, "jogadores", id));
   carregarJogadores();
 };
 
-// CARREGAR AO ABRIR
+// INICIAL
 carregarJogadores();
 </script>
 
