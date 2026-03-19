@@ -1,38 +1,9 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <title>GameOver ⚽</title>
-</head>
+<!-- 🔥 MANTIVE SEU HTML IGUAL (resumido aqui só JS alterado) -->
 
-<body>
-
-<h2>⚽ GameOver</h2>
-
-<!-- BOTÃO SECRETO ADMIN -->
-<button onclick="mostrarLogin()" 
-style="position:fixed; bottom:10px; right:10px;">
-⚙️
-</button>
-
-<!-- LOGIN (ESCONDIDO) -->
-<div id="login-area" style="display:none;">
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="senha" placeholder="Senha">
-  <button onclick="login()">Entrar</button>
-</div>
-
-<!-- ADMIN -->
-<div id="admin-area" style="display:none;">
-  <h3>Admin</h3>
-  <button onclick="addJogador()">➕ Adicionar Jogador</button>
-</div>
-
-<!-- LISTA -->
-<h3>Jogadores</h3>
-<ul id="lista"></ul>
+<!-- ... SEU HTML NÃO MUDA NADA ACIMA ... -->
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
   getFirestore,
@@ -44,13 +15,7 @@ import {
   updateDoc
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-// 🔥 SEU FIREBASE
+// 🔥 FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyCXfa8We_LZvheRJW763NRUfPqryqg84YA",
   authDomain: "klintonhansgameover.firebaseapp.com",
@@ -62,97 +27,121 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
 
-// MOSTRAR LOGIN (BOTÃO ⚙️)
-window.mostrarLogin = function () {
-  const area = document.getElementById("login-area");
-  area.style.display = area.style.display === "none" ? "block" : "none";
-};
+const mensalidade = 28;
 
-// LOGIN ADMIN
-window.login = async function () {
-  const email = document.getElementById("email").value;
-  const senha = document.getElementById("senha").value;
+// 🔥 CARREGAR JOGADORES DO FIREBASE
+async function carregarJogadores(){
 
-  try {
-    await signInWithEmailAndPassword(auth, email, senha);
-    alert("Logado como admin!");
-    carregarJogadores();
-  } catch (e) {
-    alert("Erro no login");
-    console.error(e);
-  }
-};
+let tabela = document.getElementById("tabela");
 
-// CONTROLE ADMIN
-let isAdmin = false;
+// limpa (menos cabeçalho)
+tabela.innerHTML = `
+<tr>
+<th class="nome">Jogador</th>
+<th>14/03</th>
+<th>21/03</th>
+<th>28/03</th>
+<th>04/04</th>
+<th>Ação</th>
+</tr>`;
 
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    isAdmin = true;
-    document.getElementById("admin-area").style.display = "block";
-  }
+const querySnapshot = await getDocs(collection(db, "jogadores"));
+
+querySnapshot.forEach(docSnap=>{
+
+let j = docSnap.data();
+
+let tr = document.createElement("tr");
+
+tr.innerHTML = `
+<td class="nome jogador ${j.pago ? 'pago':''}" data-id="${docSnap.id}">
+${j.pago ? '✔ ' : ''}${j.nome}
+</td>
+<td class="presenca">-</td>
+<td class="presenca">-</td>
+<td class="presenca">-</td>
+<td class="presenca">-</td>
+<td><button onclick="removerJogador('${docSnap.id}')">X</button></td>`;
+
+tabela.appendChild(tr);
+
 });
 
-// LISTAR JOGADORES (VISITANTE + ADMIN)
-async function carregarJogadores() {
-  const lista = document.getElementById("lista");
-  lista.innerHTML = "";
-
-  const querySnapshot = await getDocs(collection(db, "jogadores"));
-
-  querySnapshot.forEach((docSnap) => {
-    const data = docSnap.data();
-    const id = docSnap.id;
-
-    const li = document.createElement("li");
-
-    li.innerHTML = `
-      ${data.nome} - ${data.pago ? "✅ Pago" : "❌ Pendente"}
-      ${isAdmin ? `
-        <button onclick="pagar('${id}', ${data.pago})">💰</button>
-        <button onclick="remover('${id}')">❌</button>
-      ` : ""}
-    `;
-
-    lista.appendChild(li);
-  });
+ativarEventos();
+atualizarFinanceiro();
 }
 
-// ADICIONAR
-window.addJogador = async function () {
-  const nome = prompt("Nome do jogador:");
-  if (!nome) return;
+// 🔥 ADICIONAR
+window.adicionarJogador = async function(){
 
-  await addDoc(collection(db, "jogadores"), {
-    nome: nome,
-    pago: false
-  });
+let nome = prompt("Nome do jogador:");
+if(!nome) return;
 
-  carregarJogadores();
-};
+await addDoc(collection(db,"jogadores"),{
+nome:nome,
+pago:false
+});
 
-// PAGAR
-window.pagar = async function (id, statusAtual) {
-  const ref = doc(db, "jogadores", id);
-
-  await updateDoc(ref, {
-    pago: !statusAtual
-  });
-
-  carregarJogadores();
-};
-
-// REMOVER
-window.remover = async function (id) {
-  await deleteDoc(doc(db, "jogadores", id));
-  carregarJogadores();
-};
-
-// INICIAL
 carregarJogadores();
-</script>
+}
 
-</body>
-</html>
+// 🔥 PAGAR
+function ativarEventos(){
+
+document.querySelectorAll(".jogador").forEach(el=>{
+
+el.onclick = async ()=>{
+
+let id = el.getAttribute("data-id");
+
+let pago = el.classList.contains("pago");
+
+await updateDoc(doc(db,"jogadores",id),{
+pago:!pago
+});
+
+carregarJogadores();
+
+};
+
+});
+}
+
+// 🔥 REMOVER
+window.removerJogador = async function(id){
+
+if(!confirm("Remover jogador?")) return;
+
+await deleteDoc(doc(db,"jogadores",id));
+
+carregarJogadores();
+}
+
+// 🔥 FINANCEIRO (mantido)
+function atualizarFinanceiro(){
+
+let total=0, pagos=0;
+
+document.querySelectorAll(".jogador").forEach(el=>{
+if(el.classList.contains("pago")){
+total+=mensalidade;
+pagos++;
+}
+});
+
+document.getElementById("entrada").innerText = "R$ "+total;
+document.getElementById("saldo").innerText = "R$ "+total;
+
+document.getElementById("qtdPagamentos").innerText = pagos+" pagamentos";
+document.getElementById("statusPagamentos").innerText = pagos+" de "+document.querySelectorAll(".jogador").length+" pagos";
+
+let percent = Math.round((pagos/(document.querySelectorAll(".jogador").length||1))*100);
+document.getElementById("percentual").innerText = percent+"%";
+document.getElementById("barra").style.width = percent+"%";
+}
+
+// INIT
+carregarJogadores();
+
+</script>
