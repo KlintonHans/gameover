@@ -1,445 +1,141 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>GAMEOVER Dashboard</title>
-
-<style>
-*{ box-sizing:border-box; }
-
-body{
-margin:0;
-font-family:Arial, Helvetica, sans-serif;
-color:white;
-background-image:url("fut.jpg");
-background-size:cover;
-background-position:center;
-background-attachment:fixed;
-}
-
-.overlay{
-background:rgba(0,0,0,0.80);
-min-height:100vh;
-padding:40px;
-}
-
-.topbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-max-width:1100px;
-margin:auto;
-margin-bottom:30px;
-}
-
-.logo{
-font-size:26px;
-font-weight:bold;
-color:#22c55e;
-}
-
-.dashboard{
-max-width:1100px;
-margin:auto;
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
-}
-
-.card, .section{
-background:#1e293b;
-padding:20px;
-border-radius:12px;
-box-shadow:0 10px 20px rgba(0,0,0,0.5);
-}
-
-.section{
-grid-column:span 2;
-overflow-x:auto;
-}
-
-.card h3{ margin-top:0; color:#22c55e; }
-
-.valor{
-font-size:34px;
-font-weight:bold;
-margin-top:10px;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:10px;
-}
-
-th, td{
-padding:8px;
-text-align:center;
-border-bottom:1px solid #334155;
-}
-
-th{ color:#22c55e; }
-
-.nome{ text-align:left; cursor:pointer; }
-
-.pago{ color:#22c55e; }
-
-.presenca{ cursor:pointer; font-weight:bold; }
-
-.progress{
-background:#111;
-border-radius:20px;
-height:18px;
-margin-top:10px;
-}
-
-.progress-bar{
-height:100%;
-background:#22c55e;
-border-radius:20px;
-width:0%;
-}
-
-.pixbox{
-background:black;
-padding:12px;
-border-radius:6px;
-margin-top:10px;
-font-size:16px;
-}
-
-button{
-margin-top:10px;
-padding:8px 12px;
-border:none;
-border-radius:6px;
-background:#22c55e;
-color:white;
-font-weight:bold;
-cursor:pointer;
-}
-
-button:hover{ background:#16a34a; }
-
-a{
-color:#22c55e;
-cursor:pointer;
-text-decoration:none;
-}
-
-a:hover{ text-decoration:underline; }
-</style>
+  <meta charset="UTF-8">
+  <title>GameOver ⚽</title>
 </head>
 
 <body>
 
-<div class="overlay">
+<h2>⚽ GameOver</h2>
 
-<div class="topbar">
-<div class="logo">⚽ GAMEOVER</div>
-<div>Pelada todo sábado 18h</div>
+<!-- LOGIN -->
+<div id="login-area">
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="senha" placeholder="Senha">
+  <button onclick="login()">Entrar</button>
 </div>
 
-<div class="dashboard">
-
-<div class="card">
-<h3>💰 Entradas</h3>
-<div class="valor" id="entrada">R$ 0</div>
-<p id="qtdPagamentos">0 pagamentos</p>
-<button onclick="addEntrada()">+ Entrada</button>
+<!-- ADMIN -->
+<div id="admin-area" style="display:none;">
+  <h3>Admin</h3>
+  <button onclick="addJogador()">➕ Adicionar Jogador</button>
 </div>
 
-<div class="card">
-<h3>💸 Saídas</h3>
-<div class="valor" id="saida">R$ </div>
-<p id="ultimaSaida">Sem saídas</p>
-<button onclick="addSaida()">+ Saída</button>
-</div>
+<!-- LISTA -->
+<h3>Jogadores</h3>
+<ul id="lista"></ul>
 
-<div class="card">
-<h3>🏦 Saldo</h3>
-<div class="valor" id="saldo">R$ 0</div>
-<p id="statusPagamentos">0 de 0 pagos</p>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-<p>
-<a onclick="abrirExtrato()">Ver histórico</a>
-</p>
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-</div>
-
-<div class="card">
-<h3>📊 Pagamentos</h3>
-<p id="percentual">0%</p>
-<div class="progress">
-<div class="progress-bar" id="barra"></div>
-</div>
-</div>
-
-<div class="section">
-<h3>👥 Jogadores / Presença</h3>
-<button onclick="adicionarJogador()">+ Adicionar Jogador</button>
-
-<table id="tabela">
-<tr>
-<th class="nome">Jogador</th>
-<th>14/03</th>
-<th>21/03</th>
-<th>28/03</th>
-<th>04/04</th>
-<th>Ação</th>
-</tr>
-</table>
-</div>
-
-<div class="section">
-<h3>🏟 Informações da Quadra</h3>
-
-<p>Custo mensal quadra: <b>R$ 400</b></p>
-<p>Próximo vencimento: <b>10/04</b></p>
-
-<br>
-
-<h3>💳 Mensalidade</h3>
-
-<p>Valor: R$ 28</p>
-
-<div class="pixbox" id="pix">31992391153</div>
-
-<button onclick="copiarPix()">Copiar Pix</button>
-</div>
-
-</div>
-</div>
-
-<!-- MODAL -->
-<div id="modalExtrato" style="
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.9);
-padding:30px;
-overflow:auto;
-z-index:999;
-">
-
-<h2>📊 Histórico do Caixa</h2>
-<div id="listaExtrato"></div>
-<br>
-<button onclick="fecharExtrato()">Fechar</button>
-
-</div>
-
-<script>
-
-const mensalidade = 28;
-const custoQuadra = 0;
-
-// CARREGAR CAIXA
-let caixa = JSON.parse(localStorage.getItem("caixaExtra")) || {
-entrada: 0,
-saida: 0,
-ultimaSaida: "",
-historico: []
+// 🔥 COLE SEU CONFIG AQUI
+const firebaseConfig = {
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_DOMINIO",
+  projectId: "SEU_PROJECT_ID",
+  appId: "SEU_APP_ID"
 };
 
-// GARANTE HISTÓRICO
-if(!caixa.historico){
-caixa.historico = [];
-}
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-let dados = JSON.parse(localStorage.getItem("gameover")) || { jogadores: [] };
+// LOGIN
+window.login = async function () {
+  const email = document.getElementById("email").value;
+  const senha = document.getElementById("senha").value;
 
-function salvar(){
-localStorage.setItem("gameover", JSON.stringify(dados));
-localStorage.setItem("caixaExtra", JSON.stringify(caixa));
-}
-
-// ENTRADA
-function addEntrada(){
-
-let valor = parseFloat(prompt("Valor da entrada:"));
-
-if(isNaN(valor) || valor <= 0){
-alert("Digite um valor válido");
-return;
-}
-
-caixa.entrada += valor;
-
-caixa.historico.push({
-tipo:"entrada",
-valor:valor,
-data:new Date().toLocaleString()
-});
-
-salvar();
-atualizarFinanceiro();
-}
-
-// SAÍDA
-function addSaida(){
-
-let descricao = prompt("Descrição da saída:");
-let valor = parseFloat(prompt("Valor da saída:"));
-
-if(isNaN(valor) || valor <= 0){
-alert("Digite um valor válido");
-return;
-}
-
-caixa.saida += valor;
-
-caixa.ultimaSaida = (descricao || "Saída") + " - R$ " + valor;
-
-caixa.historico.push({
-tipo:"saida",
-valor:valor,
-descricao:descricao,
-data:new Date().toLocaleString()
-});
-
-salvar();
-atualizarFinanceiro();
-}
-
-// EXTRATO
-function abrirExtrato(){
-
-let div = document.getElementById("listaExtrato");
-div.innerHTML = "";
-
-if(!caixa.historico.length){
-div.innerHTML = "<p>Sem movimentações</p>";
-}else{
-
-caixa.historico.slice().reverse().forEach(item=>{
-
-let p = document.createElement("p");
-
-if(item.tipo === "entrada"){
-p.innerHTML = "🟢 Entrada: R$ " + item.valor + "<br><small>"+item.data+"</small>";
-}else{
-p.innerHTML = "🔴 Saída: " + (item.descricao || "") + " - R$ " + item.valor + "<br><small>"+item.data+"</small>";
-}
-
-div.appendChild(p);
-
-});
-}
-
-document.getElementById("modalExtrato").style.display = "block";
-}
-
-function fecharExtrato(){
-document.getElementById("modalExtrato").style.display = "none";
-}
-
-// RESTANTE
-function sincronizar(){
-dados.jogadores = [];
-document.querySelectorAll(".jogador").forEach(el=>{
-dados.jogadores.push({
-nome: el.textContent.replace("✔ ",""),
-pago: el.classList.contains("pago")
-});
-});
-salvar();
-}
-
-function carregarJogadores(){
-let tabela = document.getElementById("tabela");
-dados.jogadores.forEach(j=>{
-let tr = document.createElement("tr");
-tr.innerHTML = `
-<td class="nome jogador ${j.pago ? 'pago' : ''}">${j.pago ? '✔ ' : ''}${j.nome}</td>
-<td class="presenca">-</td>
-<td class="presenca">-</td>
-<td class="presenca">-</td>
-<td class="presenca">-</td>
-<td><button onclick="removerJogador(this)">X</button></td>`;
-tabela.appendChild(tr);
-});
-}
-
-function ativarEventos(){
-document.querySelectorAll(".jogador").forEach(el=>{
-el.onclick = ()=>{
-el.classList.toggle("pago");
-let nome = el.textContent.replace("✔ ","");
-el.textContent = el.classList.contains("pago") ? "✔ "+nome : nome;
-sincronizar();
-atualizarFinanceiro();
+  try {
+    await signInWithEmailAndPassword(auth, email, senha);
+    alert("Logado!");
+  } catch (e) {
+    alert("Erro no login");
+  }
 };
-});
-}
 
-function atualizarFinanceiro(){
+// MOSTRAR ADMIN
+let isAdmin = false;
 
-let total=0, pagos=0;
-document.querySelectorAll(".jogador").forEach(el=>{
-if(el.classList.contains("pago")){
-total+=mensalidade;
-pagos++;
-}
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    isAdmin = true;
+    document.getElementById("admin-area").style.display = "block";
+  }
 });
 
-let entradaTotal = total + caixa.entrada;
-let saidaTotal = custoQuadra + caixa.saida;
+// LISTAR JOGADORES
+async function carregarJogadores() {
+  const lista = document.getElementById("lista");
+  lista.innerHTML = "";
 
-document.getElementById("entrada").innerText = "R$ "+entradaTotal;
-document.getElementById("saida").innerText = "R$ "+saidaTotal;
-document.getElementById("saldo").innerText = "R$ "+(entradaTotal - saidaTotal);
+  const querySnapshot = await getDocs(collection(db, "jogadores"));
 
-document.getElementById("qtdPagamentos").innerText = pagos+" pagamentos";
-document.getElementById("statusPagamentos").innerText = pagos+" de "+document.querySelectorAll(".jogador").length+" pagos";
+  querySnapshot.forEach((docSnap) => {
+    const data = docSnap.data();
+    const id = docSnap.id;
 
-document.getElementById("ultimaSaida").innerText = caixa.ultimaSaida || "Sem saídas";
+    const li = document.createElement("li");
 
-let percent = Math.round((pagos/(document.querySelectorAll(".jogador").length||1))*100);
-document.getElementById("percentual").innerText = percent+"%";
-document.getElementById("barra").style.width = percent+"%";
+    li.innerHTML = `
+      ${data.nome} - ${data.pago ? "✅ Pago" : "❌ Pendente"}
+      ${isAdmin ? `
+        <button onclick="pagar('${id}', ${data.pago})">💰</button>
+        <button onclick="remover('${id}')">❌</button>
+      ` : ""}
+    `;
+
+    lista.appendChild(li);
+  });
 }
 
-function adicionarJogador(){
-let nome = prompt("Nome do jogador:");
-if(!nome) return;
+// ADICIONAR
+window.addJogador = async function () {
+  const nome = prompt("Nome do jogador:");
+  if (!nome) return;
 
-let tr = document.createElement("tr");
-tr.innerHTML = `
-<td class="nome jogador">${nome}</td>
-<td class="presenca">-</td>
-<td class="presenca">-</td>
-<td class="presenca">-</td>
-<td class="presenca">-</td>
-<td><button onclick="removerJogador(this)">X</button></td>`;
-document.getElementById("tabela").appendChild(tr);
+  await addDoc(collection(db, "jogadores"), {
+    nome: nome,
+    pago: false
+  });
 
-ativarEventos();
-sincronizar();
-atualizarFinanceiro();
-}
+  carregarJogadores();
+};
 
-function removerJogador(btn){
-if(!confirm("Remover jogador?")) return;
-btn.closest("tr").remove();
-ativarEventos();
-sincronizar();
-atualizarFinanceiro();
-}
+// PAGAR
+window.pagar = async function (id, statusAtual) {
+  const ref = doc(db, "jogadores", id);
 
-function copiarPix(){
-navigator.clipboard.writeText(document.getElementById("pix").innerText);
-alert("Pix copiado!");
-}
+  await updateDoc(ref, {
+    pago: !statusAtual
+  });
 
-// INIT
+  carregarJogadores();
+};
+
+// REMOVER
+window.remover = async function (id) {
+  await deleteDoc(doc(db, "jogadores", id));
+  carregarJogadores();
+};
+
+// INICIAL
 carregarJogadores();
-ativarEventos();
-atualizarFinanceiro();
-
 </script>
 
 </body>
