@@ -44,7 +44,7 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// 🔥 COLE SEU CONFIG AQUI
+// 🔥 CONFIG FIREBASE (SUBSTITUIR)
 const firebaseConfig = {
   apiKey: "SUA_API_KEY",
   authDomain: "SEU_DOMINIO",
@@ -63,13 +63,14 @@ window.login = async function () {
 
   try {
     await signInWithEmailAndPassword(auth, email, senha);
-    alert("Logado!");
+    alert("Logado com sucesso!");
   } catch (e) {
     alert("Erro no login");
+    console.error(e);
   }
 };
 
-// MOSTRAR ADMIN
+// CONTROLE ADMIN
 let isAdmin = false;
 
 onAuthStateChanged(auth, (user) => {
@@ -104,7 +105,7 @@ async function carregarJogadores() {
   });
 }
 
-// ADICIONAR
+// ADICIONAR JOGADOR
 window.addJogador = async function () {
   const nome = prompt("Nome do jogador:");
   if (!nome) return;
@@ -117,7 +118,7 @@ window.addJogador = async function () {
   carregarJogadores();
 };
 
-// PAGAR
+// MARCAR PAGAMENTO
 window.pagar = async function (id, statusAtual) {
   const ref = doc(db, "jogadores", id);
 
@@ -128,13 +129,13 @@ window.pagar = async function (id, statusAtual) {
   carregarJogadores();
 };
 
-// REMOVER
+// REMOVER JOGADOR
 window.remover = async function (id) {
   await deleteDoc(doc(db, "jogadores", id));
   carregarJogadores();
 };
 
-// INICIAL
+// CARREGAR AO ABRIR
 carregarJogadores();
 </script>
 
