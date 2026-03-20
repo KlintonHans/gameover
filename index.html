@@ -34,6 +34,8 @@ body {
 }
 .section { grid-column:span 2; overflow-x:auto; }
 .section.full { grid-column:span 4; }
+.section-jogadores { grid-column: span 3; overflow-x:auto; }
+.section-info { grid-column: span 1; }
 .card h3, .section h3 { margin-top:0; margin-bottom:8px; color:#22c55e; font-size:14px; letter-spacing:0.5px; }
 .valor { font-size:30px; font-weight:bold; margin-top:6px; }
 .card p { font-size:12px; color:#94a3b8; margin-top:4px; }
@@ -83,7 +85,7 @@ a:hover { text-decoration:underline; }
   .card { padding:12px; }
   .valor { font-size:20px; }
   .card h3 { font-size:12px; }
-  .section, .section.full { grid-column:span 2; }
+  .section, .section.full, .section-jogadores, .section-info { grid-column:span 2; }
   .info-grid { grid-template-columns:1fr; gap:16px; }
   .logo { font-size:22px; }
   .tagline { display:none; }
@@ -144,13 +146,14 @@ a:hover { text-decoration:underline; }
     </div>
 
     <div class="card">
-      <h3>📊 Adimplência</h3>
+      <h3>📊 Pagamentos</h3>
       <div class="valor" id="percentual">0%</div>
       <div class="progress"><div class="progress-bar" id="barra"></div></div>
       <p id="progressLabel" style="margin-top:6px;">0 de 0 pagos</p>
     </div>
 
-    <div class="section full">
+    <!-- Jogadores: 3 colunas -->
+    <div class="section section-jogadores">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
         <h3 style="margin:0;">👥 Jogadores / Presença</h3>
         <button id="btnAddJogador" onclick="adicionarJogador()" disabled style="margin:0;padding:6px 12px;font-size:12px;">+ Jogador</button>
@@ -167,19 +170,18 @@ a:hover { text-decoration:underline; }
       </table>
     </div>
 
-    <div class="section">
-      <div class="info-grid">
-        <div>
-          <h3>🏟 Quadra</h3>
-          <div class="info-row"><span>Custo mensal</span><strong>R$ 400</strong></div>
-          <div class="info-row"><span>Vencimento</span><strong>10/04</strong></div>
-          <div class="info-row"><span>Mensalidade</span><strong>R$ 28</strong></div>
-        </div>
-        <div>
-          <h3>💳 Pix</h3>
-          <div class="pixbox" id="pix">31992391153</div>
-          <button onclick="copiarPix()" style="margin-top:10px;">Copiar Pix</button>
-        </div>
+    <!-- Quadra + Pix empilhados: 1 coluna -->
+    <div class="section section-info">
+      <div>
+        <h3>🏟 Quadra</h3>
+        <div class="info-row"><span>Custo mensal</span><strong>R$ 400</strong></div>
+        <div class="info-row"><span>Vencimento</span><strong>10/04</strong></div>
+        <div class="info-row"><span>Mensalidade</span><strong>R$ 28</strong></div>
+      </div>
+      <div style="margin-top:20px;">
+        <h3>💳 Pix</h3>
+        <div class="pixbox" id="pix">31992391153</div>
+        <button onclick="copiarPix()" style="margin-top:10px;">Copiar Pix</button>
       </div>
     </div>
 
