@@ -32,7 +32,8 @@ body {
   border:1px solid rgba(255,255,255,0.07);
   box-shadow:0 8px 32px rgba(0,0,0,0.5);
 }
-.section { grid-column:span 4; overflow-x:auto; }
+.section { grid-column:span 2; overflow-x:auto; }
+.section.full { grid-column:span 4; }
 .card h3, .section h3 { margin-top:0; margin-bottom:8px; color:#22c55e; font-size:14px; letter-spacing:0.5px; }
 .valor { font-size:30px; font-weight:bold; margin-top:6px; }
 .card p { font-size:12px; color:#94a3b8; margin-top:4px; }
@@ -79,17 +80,13 @@ a:hover { text-decoration:underline; }
 @media (max-width:700px) {
   .overlay { padding:16px 12px 60px; }
   .dashboard { grid-template-columns:1fr 1fr; gap:10px; }
-  .section { grid-column:span 2; }
-  .card { padding:14px; }
-  .valor { font-size:24px; }
-  .card h3 { font-size:13px; }
+  .card { padding:12px; }
+  .valor { font-size:20px; }
+  .card h3 { font-size:12px; }
+  .section, .section.full { grid-column:span 2; }
   .info-grid { grid-template-columns:1fr; gap:16px; }
   .logo { font-size:22px; }
   .tagline { display:none; }
-}
-@media (max-width:420px) {
-  .dashboard { grid-template-columns:1fr; }
-  .section { grid-column:span 1; }
 }
 </style>
 </head>
@@ -153,7 +150,7 @@ a:hover { text-decoration:underline; }
       <p id="progressLabel" style="margin-top:6px;">0 de 0 pagos</p>
     </div>
 
-    <div class="section">
+    <div class="section full">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
         <h3 style="margin:0;">👥 Jogadores / Presença</h3>
         <button id="btnAddJogador" onclick="adicionarJogador()" disabled style="margin:0;padding:6px 12px;font-size:12px;">+ Jogador</button>
