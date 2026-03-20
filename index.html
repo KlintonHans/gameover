@@ -1,21 +1,271 @@
-<!-- 🔥 MANTIVE SEU HTML IGUAL (resumido aqui só JS alterado) -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAMEOVER Dashboard</title>
 
-<!-- ... SEU HTML NÃO MUDA NADA ACIMA ... -->
+<style>
+*{ box-sizing:border-box; }
 
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  color:white;
+  background-color:#0f172a;
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+}
+
+.overlay{
+  background:rgba(0,0,0,0.80);
+  min-height:100vh;
+  padding:40px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  max-width:1100px;
+  margin:auto;
+  margin-bottom:30px;
+}
+
+.logo{ font-size:26px; font-weight:bold; color:#22c55e; }
+
+.dashboard{
+  max-width:1100px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:20px;
+}
+
+.card, .section{
+  background:#1e293b;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 10px 20px rgba(0,0,0,0.5);
+}
+
+.section{ grid-column:span 2; overflow-x:auto; }
+.card h3{ margin-top:0; color:#22c55e; }
+
+.valor{ font-size:34px; font-weight:bold; margin-top:10px; }
+
+table{ width:100%; border-collapse:collapse; margin-top:10px; }
+th, td{ padding:8px; text-align:center; border-bottom:1px solid #334155; }
+th{ color:#22c55e; }
+.nome{ text-align:left; }
+.jogador{ cursor:pointer; }
+.pago{ color:#22c55e; }
+.presenca{ cursor:pointer; font-weight:bold; }
+
+.progress{ background:#111; border-radius:20px; height:18px; margin-top:10px; }
+.progress-bar{ height:100%; background:#22c55e; border-radius:20px; width:0%; transition:width 0.4s ease; }
+
+.pixbox{ background:black; padding:12px; border-radius:6px; margin-top:10px; font-size:16px; }
+
+button{
+  margin-top:10px; padding:8px 12px; border:none;
+  border-radius:6px; background:#22c55e; color:white;
+  font-weight:bold; cursor:pointer;
+}
+button:hover{ background:#16a34a; }
+button:disabled{ background:#334155; cursor:not-allowed; }
+
+a{ color:#22c55e; cursor:pointer; text-decoration:none; }
+a:hover{ text-decoration:underline; }
+
+/* LOGIN MODAL */
+#loginModal{
+  display:none;
+  position:fixed; inset:0;
+  background:rgba(0,0,0,0.92);
+  z-index:1000;
+  align-items:center;
+  justify-content:center;
+}
+#loginModal.show{ display:flex; }
+
+.login-box{
+  background:#1e293b;
+  padding:32px;
+  border-radius:16px;
+  width:100%;
+  max-width:360px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.8);
+}
+
+.login-box h2{ color:#22c55e; margin-bottom:20px; }
+
+.login-box input{
+  width:100%;
+  padding:10px 14px;
+  border-radius:8px;
+  border:1px solid #334155;
+  background:#0f172a;
+  color:white;
+  font-size:14px;
+  margin-bottom:12px;
+  outline:none;
+}
+
+.login-box input:focus{ border-color:#22c55e; }
+.login-error{ color:#f87171; font-size:13px; margin-bottom:8px; display:none; }
+
+/* TOPBAR ADMIN */
+.admin-bar{
+  display:none;
+  align-items:center;
+  gap:12px;
+  font-size:13px;
+  color:#94a3b8;
+}
+.admin-bar.show{ display:flex; }
+.admin-email{ color:#22c55e; font-weight:bold; }
+
+/* LOADING */
+#loading{
+  position:fixed; inset:0;
+  background:#0f172a;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:2000;
+  font-size:18px;
+  color:#22c55e;
+  letter-spacing:2px;
+}
+
+/* MODAL EXTRATO */
+#modalExtrato{
+  display:none;
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.9);
+  padding:30px; overflow:auto; z-index:999;
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">⚽ carregando...</div>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal">
+  <div class="login-box">
+    <h2>🔐 Admin Login</h2>
+    <input type="email" id="loginEmail" placeholder="Email" />
+    <input type="password" id="loginSenha" placeholder="Senha" />
+    <div class="login-error" id="loginError">Email ou senha incorretos.</div>
+    <button onclick="fazerLogin()" style="width:100%; margin-top:0;">Entrar</button>
+  </div>
+</div>
+
+<div class="overlay">
+
+  <div class="topbar">
+    <div class="logo">⚽ GAMEOVER</div>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <div>Pelada todo sábado 18h</div>
+      <!-- visitante -->
+      <div id="btnLoginWrap">
+        <a onclick="abrirLogin()">🔐 Admin</a>
+      </div>
+      <!-- admin logado -->
+      <div class="admin-bar" id="adminBar">
+        <span class="admin-email" id="adminEmail"></span>
+        <a onclick="fazerLogout()">Sair</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard">
+
+    <div class="card">
+      <h3>💰 Entradas</h3>
+      <div class="valor" id="entrada">R$ 0</div>
+      <p id="qtdPagamentos">0 pagamentos</p>
+      <button id="btnEntrada" onclick="addEntrada()" disabled>+ Entrada</button>
+    </div>
+
+    <div class="card">
+      <h3>💸 Saídas</h3>
+      <div class="valor" id="saida">R$ 0</div>
+      <p id="ultimaSaida">Sem saídas</p>
+      <button id="btnSaida" onclick="addSaida()" disabled>+ Saída</button>
+    </div>
+
+    <div class="card">
+      <h3>🏦 Saldo</h3>
+      <div class="valor" id="saldo">R$ 0</div>
+      <p id="statusPagamentos">0 de 0 pagos</p>
+      <p><a onclick="abrirExtrato()">Ver histórico</a></p>
+    </div>
+
+    <div class="card">
+      <h3>📊 Pagamentos</h3>
+      <p id="percentual">0%</p>
+      <div class="progress">
+        <div class="progress-bar" id="barra"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>👥 Jogadores / Presença</h3>
+      <button id="btnAddJogador" onclick="adicionarJogador()" disabled>+ Adicionar Jogador</button>
+      <table>
+        <thead>
+          <tr>
+            <th class="nome">Jogador</th>
+            <th>14/03</th>
+            <th>21/03</th>
+            <th>28/03</th>
+            <th>04/04</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaBody"></tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h3>🏟 Informações da Quadra</h3>
+      <p>Custo mensal quadra: <b>R$ 400</b></p>
+      <p>Próximo vencimento: <b>10/04</b></p>
+      <br>
+      <h3>💳 Mensalidade</h3>
+      <p>Valor: R$ 28</p>
+      <div class="pixbox" id="pix">31992391153</div>
+      <button onclick="copiarPix()">Copiar Pix</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL EXTRATO -->
+<div id="modalExtrato">
+  <h2>📊 Histórico do Caixa</h2>
+  <div id="listaExtrato"></div>
+  <br>
+  <button onclick="fecharExtrato()">Fechar</button>
+</div>
+
+<!-- FIREBASE SDK -->
 <script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
-  doc,
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, query, orderBy
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-// 🔥 FIREBASE CONFIG
+// ── CONFIG ──────────────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyCXfa8We_LZvheRJW763NRUfPqryqg84YA",
   authDomain: "klintonhansgameover.firebaseapp.com",
@@ -25,123 +275,269 @@ const firebaseConfig = {
   appId: "1:456440883345:web:0130c2c5874a1dd29f3730"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const app  = initializeApp(firebaseConfig);
+const db   = getFirestore(app);
+const auth = getAuth(app);
 
 const mensalidade = 28;
+const custoQuadra = 0;
 
-// 🔥 CARREGAR JOGADORES DO FIREBASE
-async function carregarJogadores(){
+let isAdmin = false;
 
-let tabela = document.getElementById("tabela");
-
-// limpa (menos cabeçalho)
-tabela.innerHTML = `
-<tr>
-<th class="nome">Jogador</th>
-<th>14/03</th>
-<th>21/03</th>
-<th>28/03</th>
-<th>04/04</th>
-<th>Ação</th>
-</tr>`;
-
-const querySnapshot = await getDocs(collection(db, "jogadores"));
-
-querySnapshot.forEach(docSnap=>{
-
-let j = docSnap.data();
-
-let tr = document.createElement("tr");
-
-tr.innerHTML = `
-<td class="nome jogador ${j.pago ? 'pago':''}" data-id="${docSnap.id}">
-${j.pago ? '✔ ' : ''}${j.nome}
-</td>
-<td class="presenca">-</td>
-<td class="presenca">-</td>
-<td class="presenca">-</td>
-<td class="presenca">-</td>
-<td><button onclick="removerJogador('${docSnap.id}')">X</button></td>`;
-
-tabela.appendChild(tr);
-
+// ── AUTH ────────────────────────────────────────────
+onAuthStateChanged(auth, user => {
+  isAdmin = !!user;
+  if(user){
+    document.getElementById("adminEmail").innerText = user.email;
+    document.getElementById("adminBar").classList.add("show");
+    document.getElementById("btnLoginWrap").style.display = "none";
+  } else {
+    document.getElementById("adminBar").classList.remove("show");
+    document.getElementById("btnLoginWrap").style.display = "";
+  }
+  setBotoesAdmin(isAdmin);
 });
 
-ativarEventos();
-atualizarFinanceiro();
-}
+window.abrirLogin = () => document.getElementById("loginModal").classList.add("show");
 
-// 🔥 ADICIONAR
-window.adicionarJogador = async function(){
-
-let nome = prompt("Nome do jogador:");
-if(!nome) return;
-
-await addDoc(collection(db,"jogadores"),{
-nome:nome,
-pago:false
-});
-
-carregarJogadores();
-}
-
-// 🔥 PAGAR
-function ativarEventos(){
-
-document.querySelectorAll(".jogador").forEach(el=>{
-
-el.onclick = async ()=>{
-
-let id = el.getAttribute("data-id");
-
-let pago = el.classList.contains("pago");
-
-await updateDoc(doc(db,"jogadores",id),{
-pago:!pago
-});
-
-carregarJogadores();
-
+window.fazerLogin = async () => {
+  let email = document.getElementById("loginEmail").value;
+  let senha = document.getElementById("loginSenha").value;
+  let errEl = document.getElementById("loginError");
+  errEl.style.display = "none";
+  try {
+    await signInWithEmailAndPassword(auth, email, senha);
+    document.getElementById("loginModal").classList.remove("show");
+  } catch(e) {
+    errEl.style.display = "block";
+  }
 };
 
+window.fazerLogout = () => signOut(auth);
+
+function setBotoesAdmin(ativo){
+  ["btnEntrada","btnSaida","btnAddJogador"].forEach(id => {
+    document.getElementById(id).disabled = !ativo;
+  });
+  // habilita/desabilita cliques na tabela
+  document.querySelectorAll(".jogador, .presenca").forEach(el => {
+    el.style.pointerEvents = ativo ? "auto" : "none";
+    el.style.opacity = ativo ? "1" : "0.6";
+  });
+}
+
+// ── FIRESTORE: CAIXA ────────────────────────────────
+const caixaRef = doc(db, "gameover", "caixa");
+
+async function salvarCaixa(dados){
+  await setDoc(caixaRef, dados, { merge: true });
+}
+
+async function getCaixa(){
+  let snap = await getDoc(caixaRef);
+  return snap.exists() ? snap.data() : { entrada:0, saida:0, ultimaSaida:"", historico:[] };
+}
+
+// escuta mudanças em tempo real no caixa
+onSnapshot(caixaRef, snap => {
+  if(snap.exists()) atualizarFinanceiro(snap.data());
 });
+
+window.addEntrada = async () => {
+  if(!isAdmin) return;
+  let valor = parseFloat(prompt("Valor da entrada:"));
+  if(isNaN(valor) || valor <= 0){ alert("Valor inválido"); return; }
+  let caixa = await getCaixa();
+  caixa.entrada = (caixa.entrada || 0) + valor;
+  if(!caixa.historico) caixa.historico = [];
+  caixa.historico.push({ tipo:"entrada", valor, data: new Date().toLocaleString() });
+  await salvarCaixa(caixa);
+};
+
+window.addSaida = async () => {
+  if(!isAdmin) return;
+  let descricao = prompt("Descrição da saída:");
+  if(!descricao) return;
+  let valor = parseFloat(prompt("Valor da saída:"));
+  if(isNaN(valor) || valor <= 0){ alert("Valor inválido"); return; }
+  let caixa = await getCaixa();
+  caixa.saida = (caixa.saida || 0) + valor;
+  caixa.ultimaSaida = descricao + " - R$ " + valor;
+  if(!caixa.historico) caixa.historico = [];
+  caixa.historico.push({ tipo:"saida", valor, descricao, data: new Date().toLocaleString() });
+  await salvarCaixa(caixa);
+};
+
+window.abrirExtrato = async () => {
+  let caixa = await getCaixa();
+  let div = document.getElementById("listaExtrato");
+  div.innerHTML = "";
+  let historico = caixa.historico || [];
+  if(!historico.length){
+    div.innerHTML = "<p>Sem movimentações</p>";
+  } else {
+    historico.slice().reverse().forEach(item => {
+      let p = document.createElement("p");
+      p.style.color = "white";
+      if(item.tipo === "entrada"){
+        p.innerHTML = "🟢 Entrada: R$ " + item.valor + "<br><small style='color:#94a3b8'>" + item.data + "</small>";
+      } else {
+        p.innerHTML = "🔴 Saída: " + (item.descricao||"") + " - R$ " + item.valor + "<br><small style='color:#94a3b8'>" + item.data + "</small>";
+      }
+      div.appendChild(p);
+    });
+  }
+  document.getElementById("modalExtrato").style.display = "block";
+};
+
+window.fecharExtrato = () => document.getElementById("modalExtrato").style.display = "none";
+
+// ── FIRESTORE: JOGADORES ────────────────────────────
+const jogadoresRef = doc(db, "gameover", "jogadores");
+
+async function salvarJogadores(lista){
+  await setDoc(jogadoresRef, { lista });
 }
 
-// 🔥 REMOVER
-window.removerJogador = async function(id){
-
-if(!confirm("Remover jogador?")) return;
-
-await deleteDoc(doc(db,"jogadores",id));
-
-carregarJogadores();
-}
-
-// 🔥 FINANCEIRO (mantido)
-function atualizarFinanceiro(){
-
-let total=0, pagos=0;
-
-document.querySelectorAll(".jogador").forEach(el=>{
-if(el.classList.contains("pago")){
-total+=mensalidade;
-pagos++;
-}
+// escuta mudanças em tempo real nos jogadores
+onSnapshot(jogadoresRef, snap => {
+  if(snap.exists()){
+    let lista = snap.data().lista || [];
+    renderTabela(lista);
+  }
 });
 
-document.getElementById("entrada").innerText = "R$ "+total;
-document.getElementById("saldo").innerText = "R$ "+total;
-
-document.getElementById("qtdPagamentos").innerText = pagos+" pagamentos";
-document.getElementById("statusPagamentos").innerText = pagos+" de "+document.querySelectorAll(".jogador").length+" pagos";
-
-let percent = Math.round((pagos/(document.querySelectorAll(".jogador").length||1))*100);
-document.getElementById("percentual").innerText = percent+"%";
-document.getElementById("barra").style.width = percent+"%";
+function renderTabela(jogadores){
+  let tbody = document.getElementById("tabelaBody");
+  tbody.innerHTML = "";
+  jogadores.forEach((j, idx) => tbody.appendChild(criarLinha(j, idx, jogadores)));
+  setBotoesAdmin(isAdmin);
+  atualizarContadores(jogadores);
 }
 
-// INIT
-carregarJogadores();
+function criarLinha(j, idx, lista){
+  let presencas = j.presencas && j.presencas.length === 4 ? j.presencas : ["-","-","-","-"];
+  let tr = document.createElement("tr");
+
+  // Nome
+  let tdNome = document.createElement("td");
+  tdNome.className = "nome";
+  let span = document.createElement("span");
+  span.className = "jogador" + (j.pago ? " pago" : "");
+  span.dataset.nome = j.nome;
+  span.innerText = (j.pago ? "✔ " : "") + j.nome;
+  span.onclick = async () => {
+    if(!isAdmin) return;
+    let novo = await getJogadores();
+    novo[idx].pago = !novo[idx].pago;
+    await salvarJogadores(novo);
+  };
+  tdNome.appendChild(span);
+  tr.appendChild(tdNome);
+
+  // Presenças
+  presencas.forEach((val, pi) => {
+    let td = document.createElement("td");
+    td.className = "presenca";
+    td.innerText = val;
+    td.onclick = async () => {
+      if(!isAdmin) return;
+      let estados = ["-","✔","✘"];
+      let novo = await getJogadores();
+      let cur = novo[idx].presencas[pi] || "-";
+      novo[idx].presencas[pi] = estados[(estados.indexOf(cur)+1) % estados.length];
+      await salvarJogadores(novo);
+    };
+    tr.appendChild(td);
+  });
+
+  // Remover
+  let tdAcao = document.createElement("td");
+  let btn = document.createElement("button");
+  btn.innerText = "X";
+  btn.style.marginTop = "0";
+  btn.disabled = !isAdmin;
+  btn.onclick = async () => {
+    if(!isAdmin) return;
+    if(!confirm("Remover jogador?")) return;
+    let novo = await getJogadores();
+    novo.splice(idx, 1);
+    await salvarJogadores(novo);
+  };
+  tdAcao.appendChild(btn);
+  tr.appendChild(tdAcao);
+
+  return tr;
+}
+
+async function getJogadores(){
+  let snap = await getDoc(jogadoresRef);
+  return snap.exists() ? (snap.data().lista || []) : [];
+}
+
+window.adicionarJogador = async () => {
+  if(!isAdmin) return;
+  let nome = prompt("Nome do jogador:");
+  if(!nome || !nome.trim()) return;
+  let lista = await getJogadores();
+  lista.push({ nome: nome.trim(), pago: false, presencas:["-","-","-","-"] });
+  await salvarJogadores(lista);
+};
+
+// ── FINANCEIRO ──────────────────────────────────────
+function atualizarFinanceiro(caixa){
+  let jogadores = Array.from(document.querySelectorAll(".jogador"));
+  let pagos = jogadores.filter(el => el.classList.contains("pago")).length;
+  let totalMensalidades = pagos * mensalidade;
+
+  let entradaTotal = totalMensalidades + (caixa.entrada || 0);
+  let saidaTotal   = custoQuadra + (caixa.saida || 0);
+
+  document.getElementById("entrada").innerText = "R$ " + entradaTotal;
+  document.getElementById("saida").innerText   = "R$ " + saidaTotal;
+  document.getElementById("saldo").innerText   = "R$ " + (entradaTotal - saidaTotal);
+  document.getElementById("qtdPagamentos").innerText    = pagos + " pagamento" + (pagos!==1?"s":"");
+  document.getElementById("statusPagamentos").innerText = pagos + " de " + jogadores.length + " pagos";
+  document.getElementById("ultimaSaida").innerText      = caixa.ultimaSaida || "Sem saídas";
+
+  let percent = Math.round((pagos / (jogadores.length||1)) * 100);
+  document.getElementById("percentual").innerText  = percent + "%";
+  document.getElementById("barra").style.width     = percent + "%";
+}
+
+function atualizarContadores(lista){
+  // chamado após re-render da tabela para atualizar financeiro com caixa atual
+  getDoc(caixaRef).then(snap => {
+    let caixa = snap.exists() ? snap.data() : { entrada:0, saida:0, ultimaSaida:"", historico:[] };
+    atualizarFinanceiro(caixa);
+  });
+}
+
+// ── PIX ─────────────────────────────────────────────
+window.copiarPix = () => {
+  navigator.clipboard.writeText(document.getElementById("pix").innerText)
+    .then(() => alert("Pix copiado!"))
+    .catch(() => alert("Chave Pix: " + document.getElementById("pix").innerText));
+};
+
+// ── INIT ────────────────────────────────────────────
+// esconder loading quando tudo estiver pronto
+Promise.all([
+  getDoc(caixaRef),
+  getDoc(jogadoresRef)
+]).then(([caixaSnap, jogSnap]) => {
+  if(jogSnap.exists()) renderTabela(jogSnap.data().lista || []);
+  if(caixaSnap.exists()) atualizarFinanceiro(caixaSnap.data());
+  document.getElementById("loading").style.display = "none";
+}).catch(() => {
+  document.getElementById("loading").innerText = "❌ Erro ao conectar com Firebase.";
+});
+
+// Enter no login
+document.getElementById("loginSenha").addEventListener("keydown", e => {
+  if(e.key === "Enter") window.fazerLogin();
+});
 
 </script>
+</body>
+</html>
