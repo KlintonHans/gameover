@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GAMEOVER Dashboard</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing:border-box; margin:0; padding:0; }
+
 body {
   font-family: Arial, Helvetica, sans-serif;
   color: white;
@@ -15,108 +16,229 @@ body {
   background-attachment: fixed;
   min-height: 100vh;
 }
-.overlay { background: rgba(0,0,0,0.82); min-height: 100vh; padding: 24px 16px 60px; }
-.topbar { display:flex; justify-content:space-between; align-items:center; max-width:1100px; margin:0 auto 24px; gap:12px; flex-wrap:wrap; }
+
+.overlay {
+  background: rgba(0,0,0,0.82);
+  min-height: 100vh;
+  padding: 24px 16px 60px;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto 24px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 .logo { font-size:28px; font-weight:bold; color:#22c55e; line-height:1; }
 .topbar-right { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
 .tagline { font-size:13px; color:#94a3b8; }
 .admin-bar { display:none; align-items:center; gap:10px; font-size:13px; color:#94a3b8; }
 .admin-bar.show { display:flex; }
 .admin-email { color:#22c55e; font-weight:bold; font-size:12px; max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.dashboard { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
-.card, .section {
+
+/* ── DASHBOARD GRID ── */
+.dashboard {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+/* ── CARDS e SECTIONS ── */
+.card, .section-jogadores, .section-info {
   background: rgba(15,23,42,0.88);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  padding:18px; border-radius:14px;
-  border:1px solid rgba(255,255,255,0.07);
-  box-shadow:0 8px 32px rgba(0,0,0,0.5);
+  padding: 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.07);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
-.section { grid-column:span 2; overflow-x:auto; }
-.section.full { grid-column:span 4; }
-.section-jogadores { grid-column: span 3; overflow-x:auto; }
-.section-info { grid-column: span 1; }
-.card h3, .section h3 { margin-top:0; margin-bottom:8px; color:#22c55e; font-size:14px; letter-spacing:0.5px; }
+
+/* PC: jogadores ocupa 3 cols, info ocupa 1 col */
+.section-jogadores { grid-column: span 3; overflow-x: auto; }
+.section-info      { grid-column: span 1; }
+
+.card h3, .section-jogadores h3, .section-info h3 {
+  margin-top: 0; margin-bottom: 8px;
+  color: #22c55e; font-size: 14px; letter-spacing: 0.5px;
+}
 .valor { font-size:30px; font-weight:bold; margin-top:6px; }
 .card p { font-size:12px; color:#94a3b8; margin-top:4px; }
+
+/* ── PROGRESS ── */
 .progress { background:#1e293b; border-radius:20px; height:14px; margin-top:10px; }
 .progress-bar { height:100%; background:#22c55e; border-radius:20px; width:0%; transition:width 0.4s ease; }
-table { width:100%; border-collapse:collapse; margin-top:10px; min-width:480px; }
+
+/* ── TABLE ── */
+table { width:100%; border-collapse:collapse; margin-top:10px; min-width:460px; }
 th, td { padding:9px 8px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.07); font-size:13px; }
 th { color:#22c55e; font-size:11px; letter-spacing:1px; text-transform:uppercase; }
 td.nome { text-align:left; }
 .jogador { cursor:pointer; }
 .pago { color:#22c55e; }
-.presenca { cursor:pointer; font-weight:bold; font-size:16px; }
-button { margin-top:10px; padding:8px 14px; border:none; border-radius:8px; background:#22c55e; color:white; font-weight:bold; font-size:13px; cursor:pointer; transition:background 0.2s; }
-button:hover { background:#16a34a; }
-button:disabled { background:#334155; cursor:not-allowed; opacity:0.5; }
-a { color:#22c55e; cursor:pointer; text-decoration:none; font-size:13px; }
-a:hover { text-decoration:underline; }
-.pixbox { background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; margin-top:10px; font-size:18px; font-weight:bold; letter-spacing:1px; word-break:break-all; }
-.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.presenca { cursor:pointer; font-size:16px; }
+
+/* ── INFO ROWS ── */
 .info-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:13px; color:#94a3b8; }
 .info-row strong { color:white; }
-#loginModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92); backdrop-filter:blur(6px); z-index:1000; align-items:center; justify-content:center; padding:20px; }
-#loginModal.show { display:flex; }
-.login-box { background:rgba(15,23,42,0.97); border:1px solid rgba(255,255,255,0.1); padding:28px 24px; border-radius:16px; width:100%; max-width:340px; box-shadow:0 20px 60px rgba(0,0,0,0.8); }
-.login-box h2 { color:#22c55e; margin-bottom:18px; font-size:20px; }
-.login-box input { width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; background:#0f172a; color:white; font-size:14px; margin-bottom:10px; outline:none; }
-.login-box input:focus { border-color:#22c55e; }
-.login-box button { width:100%; margin-top:4px; padding:10px; font-size:15px; }
+.pixbox { background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; margin-top:10px; font-size:18px; font-weight:bold; letter-spacing:1px; word-break:break-all; }
+
+/* ── BUTTONS ── */
+button { margin-top:10px; padding:8px 14px; border:none; border-radius:8px; background:#22c55e; color:white; font-weight:bold; font-size:13px; cursor:pointer; transition:background 0.2s; }
+button:hover { background:#16a34a; }
+button:disabled { background:#334155 !important; cursor:not-allowed; opacity:0.5; }
+a { color:#22c55e; cursor:pointer; text-decoration:none; font-size:13px; }
+a:hover { text-decoration:underline; }
+
+/* ── LOADING ── */
+#loading { position:fixed; inset:0; background:rgba(0,0,0,0.95); display:flex; align-items:center; justify-content:center; z-index:2000; font-size:20px; color:#22c55e; letter-spacing:2px; }
+
+/* ── MODAIS BASE ── */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.show { display:flex; }
+
+.modal-box {
+  background: rgba(15,23,42,0.97);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 28px 24px;
+  border-radius: 16px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+}
+
+/* ── LOGIN MODAL ── */
+#modalLogin .modal-box { max-width:340px; }
+.modal-box h2 { margin-bottom:18px; font-size:20px; }
+.modal-box input { width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; background:#0f172a; color:white; font-size:14px; margin-bottom:10px; outline:none; }
+.modal-box input:focus { border-color:#22c55e; }
 .login-error { color:#f87171; font-size:12px; margin-bottom:8px; display:none; }
-#modalExtrato { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92); backdrop-filter:blur(6px); padding:24px 16px; overflow:auto; z-index:999; }
+
+/* ── VIRAR MÊS MODAL ── */
+#modalVirarMes .modal-box { max-width:400px; }
+#modalVirarMes h2 { color:#f59e0b; }
+#modalVirarMes p { color:#94a3b8; font-size:13px; margin-bottom:16px; line-height:1.6; }
+.resumo { background:rgba(0,0,0,0.3); border-radius:8px; padding:12px 16px; margin-bottom:20px; font-size:13px; }
+.resumo-row { display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+.resumo-row:last-child { border:none; }
+.resumo-row span { color:#94a3b8; }
+.resumo-row strong { color:white; }
+.btn-row { display:flex; gap:10px; }
+.btn-row button { flex:1; margin:0; padding:10px; font-size:14px; }
+.btn-amarelo { background:#f59e0b !important; }
+.btn-amarelo:hover { background:#d97706 !important; }
+.btn-cinza { background:#334155 !important; }
+.btn-cinza:hover { background:#475569 !important; }
+
+/* ── EXTRATO MODAL ── */
+#modalExtrato {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(6px);
+  padding: 24px 16px;
+  overflow: auto;
+  z-index: 999;
+}
 .extrato-inner { max-width:560px; margin:0 auto; background:rgba(15,23,42,0.97); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:24px; }
 .extrato-inner h2 { margin-bottom:16px; color:#22c55e; }
 .extrato-item { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); gap:10px; }
-.extrato-item .ei-left { display:flex; align-items:center; gap:10px; }
+.ei-left { display:flex; align-items:center; gap:10px; }
 .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-.dot.entrada { background:#22c55e; }
-.dot.saida { background:#f87171; }
 .ei-desc { font-size:13px; }
 .ei-date { font-size:11px; color:#64748b; }
 .ei-val { font-weight:bold; font-size:14px; white-space:nowrap; }
-.ei-val.entrada { color:#22c55e; }
-.ei-val.saida { color:#f87171; }
-#loading { position:fixed; inset:0; background:rgba(0,0,0,0.95); display:flex; align-items:center; justify-content:center; z-index:2000; font-size:20px; color:#22c55e; letter-spacing:2px; }
+
+/* ── MOBILE ── */
 @media (max-width:700px) {
   .overlay { padding:16px 12px 60px; }
   .dashboard { grid-template-columns:1fr 1fr; gap:10px; }
   .card { padding:12px; }
   .valor { font-size:20px; }
   .card h3 { font-size:12px; }
-  .section, .section.full, .section-jogadores, .section-info { grid-column:span 2; }
-  .info-grid { grid-template-columns:1fr; gap:16px; }
+  /* seções ocupam largura total no mobile */
+  .section-jogadores, .section-info { grid-column:span 2; }
   .logo { font-size:22px; }
   .tagline { display:none; }
+  #btnVirarMes { font-size:11px; padding:5px 8px; }
 }
 </style>
 </head>
 <body>
 
+<!-- LOADING -->
 <div id="loading">⚽ carregando...</div>
 
-<div id="loginModal">
-  <div class="login-box">
-    <h2>🔐 Admin Login</h2>
+<!-- MODAL LOGIN -->
+<div id="modalLogin" class="modal-overlay">
+  <div class="modal-box">
+    <h2 style="color:#22c55e;">🔐 Admin Login</h2>
     <input type="email" id="loginEmail" placeholder="Email" autocomplete="email"/>
     <input type="password" id="loginSenha" placeholder="Senha" autocomplete="current-password"/>
     <div class="login-error" id="loginError">Email ou senha incorretos.</div>
-    <button onclick="fazerLogin()">Entrar</button>
+    <button onclick="fazerLogin()" style="width:100%;margin-top:4px;padding:10px;font-size:15px;">Entrar</button>
     <div style="margin-top:12px;text-align:center;">
-      <a onclick="document.getElementById('loginModal').classList.remove('show')">Cancelar</a>
+      <a onclick="fecharModal('modalLogin')">Cancelar</a>
     </div>
   </div>
 </div>
 
+<!-- MODAL VIRAR MÊS -->
+<div id="modalVirarMes" class="modal-overlay">
+  <div class="modal-box">
+    <h2>🔄 Virar Mês</h2>
+    <p>Esta ação prepara o sistema para o novo mês:</p>
+    <div class="resumo">
+      <div class="resumo-row"><span>✅ Mantém</span><strong>Jogadores cadastrados</strong></div>
+      <div class="resumo-row"><span>✅ Mantém</span><strong>Saldo do caixa</strong></div>
+      <div class="resumo-row"><span>✅ Mantém</span><strong>Histórico financeiro</strong></div>
+      <div class="resumo-row"><span>🔄 Zera</span><strong>Status de pagamento</strong></div>
+      <div class="resumo-row"><span>🔄 Zera</span><strong>Presenças</strong></div>
+      <div class="resumo-row"><span>🔄 Atualiza</span><strong>Datas das colunas</strong></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-cinza" onclick="fecharModal('modalVirarMes')">Cancelar</button>
+      <button class="btn-amarelo" onclick="confirmarVirarMes()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EXTRATO -->
+<div id="modalExtrato">
+  <div class="extrato-inner">
+    <h2>📊 Histórico do Caixa</h2>
+    <div id="listaExtrato"></div>
+    <br>
+    <button onclick="fecharExtrato()">Fechar</button>
+  </div>
+</div>
+
+<!-- APP -->
 <div class="overlay">
   <div class="topbar">
     <div class="logo">⚽ GAMEOVER</div>
     <div class="topbar-right">
-      <span class="tagline">Jogo todo sábado · 18h</span>
-      <div id="btnLoginWrap"><a onclick="abrirLogin()">🔐 Admin</a></div>
+      <span class="tagline">Pelada todo sábado · 18h</span>
+      <div id="btnLoginWrap">
+        <a onclick="abrirLogin()">🔐 Admin</a>
+      </div>
       <div class="admin-bar" id="adminBar">
         <span class="admin-email" id="adminEmail"></span>
+        <button id="btnVirarMes" onclick="virarMes()" style="margin:0;padding:6px 12px;font-size:12px;background:#f59e0b;" disabled>🔄 Virar Mês</button>
         <a onclick="fazerLogout()">Sair</a>
       </div>
     </div>
@@ -142,7 +264,7 @@ a:hover { text-decoration:underline; }
       <h3>🏦 Saldo</h3>
       <div class="valor" id="saldo">R$ 0</div>
       <p id="statusPagamentos">0 de 0 pagos</p>
-      <p style="margin-top:10px;"><a onclick="abrirExtrato()">Ver histórico saída →</a></p>
+      <p style="margin-top:10px;"><a onclick="abrirExtrato()">Ver histórico →</a></p>
     </div>
 
     <div class="card">
@@ -152,17 +274,20 @@ a:hover { text-decoration:underline; }
       <p id="progressLabel" style="margin-top:6px;">0 de 0 pagos</p>
     </div>
 
-    <!-- Jogadores: 3 colunas -->
-    <div class="section section-jogadores">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
+    <!-- Jogadores: 3 cols PC / full mobile -->
+    <div class="section-jogadores">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
         <h3 style="margin:0;">👥 Jogadores / Presença</h3>
         <button id="btnAddJogador" onclick="adicionarJogador()" disabled style="margin:0;padding:6px 12px;font-size:12px;">+ Jogador</button>
       </div>
       <table>
         <thead>
-          <tr>
+          <tr id="cabecalhoTabela">
             <th style="text-align:left;">Jogador</th>
-            <th>14/03</th><th>21/03</th><th>28/03</th><th>04/04</th>
+            <th>14/03</th>
+            <th>21/03</th>
+            <th>28/03</th>
+            <th>04/04</th>
             <th>Ação</th>
           </tr>
         </thead>
@@ -170,38 +295,27 @@ a:hover { text-decoration:underline; }
       </table>
     </div>
 
-    <!-- Quadra + Pix empilhados: 1 coluna -->
-    <div class="section section-info">
-      <div>
-        <h3>🏟 Quadra</h3>
-        <div class="info-row"><span>Custo mensal</span><strong>R$ 400</strong></div>
-        <div class="info-row"><span>Vencimento</span><strong>10/04</strong></div>
-        <div class="info-row"><span>Mensalidade por atleta</span><strong>R$ 28</strong></div>
-      </div>
-      <div style="margin-top:20px;">
-        <h3>💳 Pix</h3>
-        <div class="pixbox" id="pix">31992391153</div>
-        <button onclick="copiarPix()" style="margin-top:10px;">Copiar Pix</button>
-      </div>
+    <!-- Info + Pix: 1 col PC / full mobile -->
+    <div class="section-info">
+      <h3>🏟 Quadra</h3>
+      <div class="info-row"><span>Custo mensal</span><strong>R$ 400</strong></div>
+      <div class="info-row"><span>Vencimento</span><strong>10/04</strong></div>
+      <div class="info-row"><span>Mensalidade</span><strong>R$ 28</strong></div>
+
+      <h3 style="margin-top:24px;">💳 Pix</h3>
+      <div class="pixbox" id="pix">31992391153</div>
+      <button onclick="copiarPix()" style="margin-top:10px;">Copiar Pix</button>
     </div>
 
   </div>
 </div>
 
-<div id="modalExtrato">
-  <div class="extrato-inner">
-    <h2>📊 Histórico do Caixa</h2>
-    <div id="listaExtrato"></div>
-    <br>
-    <button onclick="fecharExtrato()">Fechar</button>
-  </div>
-</div>
-
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { initializeApp }                               from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+// ── CONFIG ──────────────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyCXfa8We_LZvheRJW763NRUfPqryqg84YA",
   authDomain: "klintonhansgameover.firebaseapp.com",
@@ -219,6 +333,13 @@ const mensalidade = 28;
 const custoQuadra = 0;
 let isAdmin = false;
 
+const caixaRef     = doc(db, "gameover", "caixa");
+const jogadoresRef = doc(db, "gameover", "jogadores");
+
+// ── HELPERS MODAL ───────────────────────────────────
+window.fecharModal = (id) => document.getElementById(id).classList.remove("show");
+
+// ── AUTH ────────────────────────────────────────────
 onAuthStateChanged(auth, user => {
   isAdmin = !!user;
   if(user){
@@ -232,7 +353,7 @@ onAuthStateChanged(auth, user => {
   setBotoesAdmin(isAdmin);
 });
 
-window.abrirLogin  = () => document.getElementById("loginModal").classList.add("show");
+window.abrirLogin  = () => document.getElementById("modalLogin").classList.add("show");
 window.fazerLogout = () => signOut(auth);
 
 window.fazerLogin = async () => {
@@ -242,7 +363,7 @@ window.fazerLogin = async () => {
   errEl.style.display = "none";
   try {
     await signInWithEmailAndPassword(auth, email, senha);
-    document.getElementById("loginModal").classList.remove("show");
+    fecharModal("modalLogin");
   } catch(e) {
     errEl.style.display = "block";
   }
@@ -253,18 +374,17 @@ document.getElementById("loginSenha").addEventListener("keydown", e => {
 });
 
 function setBotoesAdmin(ativo){
-  ["btnEntrada","btnSaida","btnAddJogador"].forEach(id => {
-    document.getElementById(id).disabled = !ativo;
+  ["btnEntrada","btnSaida","btnAddJogador","btnVirarMes"].forEach(id => {
+    let el = document.getElementById(id);
+    if(el) el.disabled = !ativo;
   });
   document.querySelectorAll(".jogador, .presenca").forEach(el => {
     el.style.pointerEvents = ativo ? "auto" : "none";
-    el.style.opacity = ativo ? "1" : "0.7";
+    el.style.opacity       = ativo ? "1"    : "0.7";
   });
 }
 
-const caixaRef     = doc(db, "gameover", "caixa");
-const jogadoresRef = doc(db, "gameover", "jogadores");
-
+// ── FIRESTORE HELPERS ───────────────────────────────
 async function getCaixa(){
   let snap = await getDoc(caixaRef);
   return snap.exists() ? snap.data() : { entrada:0, saida:0, ultimaSaida:"", historico:[] };
@@ -275,6 +395,7 @@ async function getJogadores(){
   return snap.exists() ? (snap.data().lista || []) : [];
 }
 
+// ── LISTENERS TEMPO REAL ────────────────────────────
 onSnapshot(caixaRef, snap => {
   if(snap.exists()) atualizarFinanceiro(snap.data());
 });
@@ -283,6 +404,7 @@ onSnapshot(jogadoresRef, snap => {
   if(snap.exists()) renderTabela(snap.data().lista || []);
 });
 
+// ── CAIXA ───────────────────────────────────────────
 window.addEntrada = async () => {
   if(!isAdmin) return;
   let valor = parseFloat(prompt("Valor da entrada:"));
@@ -290,7 +412,7 @@ window.addEntrada = async () => {
   let c = await getCaixa();
   c.entrada = (c.entrada||0) + valor;
   if(!c.historico) c.historico = [];
-  c.historico.push({ tipo:"entrada", valor, data: new Date().toLocaleString() });
+  c.historico.push({ tipo:"entrada", valor, data:new Date().toLocaleString() });
   await setDoc(caixaRef, c);
 };
 
@@ -304,12 +426,13 @@ window.addSaida = async () => {
   c.saida = (c.saida||0) + valor;
   c.ultimaSaida = descricao + " - R$ " + valor;
   if(!c.historico) c.historico = [];
-  c.historico.push({ tipo:"saida", valor, descricao, data: new Date().toLocaleString() });
+  c.historico.push({ tipo:"saida", valor, descricao, data:new Date().toLocaleString() });
   await setDoc(caixaRef, c);
 };
 
+// ── EXTRATO ─────────────────────────────────────────
 window.abrirExtrato = async () => {
-  let c = await getCaixa();
+  let c   = await getCaixa();
   let div = document.getElementById("listaExtrato");
   div.innerHTML = "";
   let h = c.historico || [];
@@ -317,18 +440,23 @@ window.abrirExtrato = async () => {
     div.innerHTML = "<p style='color:#94a3b8'>Sem movimentações.</p>";
   } else {
     h.slice().reverse().forEach(item => {
+      let cor, sinal, desc;
+      if(item.tipo === "entrada"){
+        cor = "#22c55e"; sinal = "+ R$ " + item.valor; desc = "Entrada";
+      } else if(item.tipo === "virames"){
+        cor = "#f59e0b"; sinal = ""; desc = item.descricao || "Virada de mês";
+      } else {
+        cor = "#f87171"; sinal = "- R$ " + item.valor; desc = item.descricao || "Saída";
+      }
       let el = document.createElement("div");
       el.className = "extrato-item";
-      let tipo = item.tipo === "entrada" ? "entrada" : "saida";
       el.innerHTML =
         '<div class="ei-left">' +
-          '<div class="dot ' + tipo + '"></div>' +
-          '<div>' +
-            '<div class="ei-desc">' + (tipo==="entrada" ? "Entrada" : (item.descricao||"Saída")) + '</div>' +
-            '<div class="ei-date">' + item.data + '</div>' +
-          '</div>' +
+          '<div class="dot" style="background:' + cor + '"></div>' +
+          '<div><div class="ei-desc">' + desc + '</div>' +
+          '<div class="ei-date">' + item.data + '</div></div>' +
         '</div>' +
-        '<div class="ei-val ' + tipo + '">' + (tipo==="entrada"?"+":"-") + ' R$ ' + item.valor + '</div>';
+        '<div class="ei-val" style="color:' + cor + '">' + sinal + '</div>';
       div.appendChild(el);
     });
   }
@@ -337,6 +465,7 @@ window.abrirExtrato = async () => {
 
 window.fecharExtrato = () => document.getElementById("modalExtrato").style.display = "none";
 
+// ── TABELA JOGADORES ────────────────────────────────
 function renderTabela(lista){
   let tbody = document.getElementById("tabelaBody");
   tbody.innerHTML = "";
@@ -346,15 +475,16 @@ function renderTabela(lista){
 }
 
 function criarLinha(j, idx){
-  let presencas = j.presencas && j.presencas.length===4 ? j.presencas : ["-","-","-","-"];
+  let presencas = (j.presencas && j.presencas.length === 4) ? j.presencas : ["-","-","-","-"];
   let tr = document.createElement("tr");
 
+  // Nome + pago
   let tdNome = document.createElement("td");
   tdNome.className = "nome";
   let span = document.createElement("span");
-  span.className = "jogador" + (j.pago?" pago":"");
+  span.className   = "jogador" + (j.pago ? " pago" : "");
   span.dataset.nome = j.nome;
-  span.innerText = (j.pago?"✔ ":"") + j.nome;
+  span.innerText   = (j.pago ? "✔ " : "") + j.nome;
   span.onclick = async () => {
     if(!isAdmin) return;
     let novo = await getJogadores();
@@ -364,33 +494,35 @@ function criarLinha(j, idx){
   tdNome.appendChild(span);
   tr.appendChild(tdNome);
 
+  // Presenças
   presencas.forEach((val, pi) => {
     let td = document.createElement("td");
     td.className = "presenca";
-    td.innerText = val==="✔" ? "✅" : val==="✘" ? "❌" : "·";
+    td.innerText = val === "✔" ? "✅" : val === "✘" ? "❌" : "·";
     td.onclick = async () => {
       if(!isAdmin) return;
       let estados = ["-","✔","✘"];
       let novo = await getJogadores();
-      let cur = novo[idx].presencas[pi]||"-";
-      novo[idx].presencas[pi] = estados[(estados.indexOf(cur)+1)%estados.length];
+      let cur  = novo[idx].presencas[pi] || "-";
+      novo[idx].presencas[pi] = estados[(estados.indexOf(cur)+1) % estados.length];
       await setDoc(jogadoresRef, { lista: novo });
     };
     tr.appendChild(td);
   });
 
+  // Remover
   let tdAcao = document.createElement("td");
-  let btn = document.createElement("button");
-  btn.innerText = "✕";
-  btn.style.cssText = "margin:0;padding:4px 8px;font-size:12px;background:#ef4444;";
-  btn.disabled = !isAdmin;
-  btn.onclick = async () => {
+  let btnRem = document.createElement("button");
+  btnRem.innerText    = "✕";
+  btnRem.style.cssText = "margin:0;padding:4px 8px;font-size:12px;background:#ef4444;";
+  btnRem.disabled     = !isAdmin;
+  btnRem.onclick = async () => {
     if(!isAdmin || !confirm("Remover " + j.nome + "?")) return;
     let novo = await getJogadores();
-    novo.splice(idx,1);
+    novo.splice(idx, 1);
     await setDoc(jogadoresRef, { lista: novo });
   };
-  tdAcao.appendChild(btn);
+  tdAcao.appendChild(btnRem);
   tr.appendChild(tdAcao);
   return tr;
 }
@@ -398,36 +530,132 @@ function criarLinha(j, idx){
 window.adicionarJogador = async () => {
   if(!isAdmin) return;
   let nome = prompt("Nome do jogador:");
-  if(!nome||!nome.trim()) return;
+  if(!nome || !nome.trim()) return;
   let lista = await getJogadores();
   lista.push({ nome: nome.trim(), pago:false, presencas:["-","-","-","-"] });
   await setDoc(jogadoresRef, { lista });
 };
 
+// ── FINANCEIRO ──────────────────────────────────────
 function atualizarFinanceiro(caixa){
-  let jogEls = document.querySelectorAll(".jogador");
-  let pagos  = Array.from(jogEls).filter(el => el.classList.contains("pago")).length;
-  let total  = pagos * mensalidade;
-  let entradaTotal = total + (caixa.entrada||0);
-  let saidaTotal   = custoQuadra + (caixa.saida||0);
+  let jogEls      = document.querySelectorAll(".jogador");
+  let pagos       = Array.from(jogEls).filter(el => el.classList.contains("pago")).length;
+  let entradaTotal = (pagos * mensalidade) + (caixa.entrada || 0);
+  let saidaTotal   = custoQuadra + (caixa.saida || 0);
+
   document.getElementById("entrada").innerText          = "R$ " + entradaTotal;
   document.getElementById("saida").innerText            = "R$ " + saidaTotal;
   document.getElementById("saldo").innerText            = "R$ " + (entradaTotal - saidaTotal);
-  document.getElementById("qtdPagamentos").innerText    = pagos + " pagamento" + (pagos!==1?"s":"");
+  document.getElementById("qtdPagamentos").innerText    = pagos + " pagamento" + (pagos !== 1 ? "s" : "");
   document.getElementById("statusPagamentos").innerText = pagos + " de " + jogEls.length + " pagos";
   document.getElementById("ultimaSaida").innerText      = caixa.ultimaSaida || "Sem saídas";
   document.getElementById("progressLabel").innerText    = pagos + " de " + jogEls.length + " pagos";
-  let pct = Math.round((pagos/(jogEls.length||1))*100);
+
+  let pct = Math.round((pagos / (jogEls.length || 1)) * 100);
   document.getElementById("percentual").innerText = pct + "%";
   document.getElementById("barra").style.width    = pct + "%";
 }
 
+// ── VIRAR MÊS ───────────────────────────────────────
+window.virarMes = () => {
+  if(!isAdmin) return;
+  document.getElementById("modalVirarMes").classList.add("show");
+};
+
+window.confirmarVirarMes = async () => {
+  if(!isAdmin) return;
+
+  // Calcula total a ser salvo
+  let lista  = await getJogadores();
+  let pagos  = lista.filter(j => j.pago).length;
+  let total  = pagos * mensalidade;
+
+  // Pede descrição para a entrada
+  let descricao = prompt(
+    "Descrição da entrada de mensalidades:\n" +
+    "Ex: Ref. Março/2026\n\n" +
+    pagos + " jogador(es) pagaram → R$ " + total
+  );
+  if(!descricao) return; // cancelou
+
+  let novasDatas = proximosSabados();
+  let c = await getCaixa();
+  if(!c.historico) c.historico = [];
+
+  // Salva entrada automática no caixa (somente se houve pagamentos)
+  if(total > 0){
+    c.entrada = (c.entrada || 0) + total;
+    c.historico.push({
+      tipo: "entrada",
+      valor: total,
+      descricao: descricao,
+      data: new Date().toLocaleString()
+    });
+  }
+
+  // Registra evento de virada
+  c.historico.push({
+    tipo: "virames",
+    descricao: "Virada de mês → " + novasDatas.mes + (total > 0 ? " · R$ " + total + " lançados" : " · sem pagamentos"),
+    data: new Date().toLocaleString()
+  });
+  await setDoc(caixaRef, c);
+
+  // Zera pagamentos e presenças
+  lista = lista.map(j => ({ ...j, pago:false, presencas:["-","-","-","-"] }));
+  await setDoc(jogadoresRef, { lista });
+
+  // Atualiza cabeçalhos
+  atualizarCabecalhos(novasDatas.datas);
+
+  fecharModal("modalVirarMes");
+  alert(
+    "✅ Mês virado para " + novasDatas.mes + "!\n" +
+    (total > 0 ? "💰 R$ " + total + " lançados como entrada (" + descricao + ")\n" : "") +
+    "🔄 Pagamentos e presenças zerados."
+  );
+};
+
+function proximosSabados(){
+  let hoje = new Date();
+  let mes  = hoje.getMonth() + 1;
+  let ano  = hoje.getFullYear();
+  if(mes > 11){ mes = 0; ano++; }
+
+  let sabados = [];
+  let d = new Date(ano, mes, 1);
+  while(d.getMonth() === mes){
+    if(d.getDay() === 6) sabados.push(new Date(d));
+    d.setDate(d.getDate() + 1);
+  }
+  while(sabados.length < 4) sabados.push(sabados[sabados.length - 1]);
+
+  let datas = sabados.slice(0,4).map(s =>
+    String(s.getDate()).padStart(2,"0") + "/" + String(s.getMonth()+1).padStart(2,"0")
+  );
+  let nomes = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+  return { datas, mes: nomes[mes] + "/" + ano };
+}
+
+function atualizarCabecalhos(datas){
+  // Usa id do tr do cabeçalho para selecionar com precisão
+  let ths = document.querySelectorAll("#cabecalhoTabela th");
+  if(ths.length >= 5){
+    ths[1].innerText = datas[0];
+    ths[2].innerText = datas[1];
+    ths[3].innerText = datas[2];
+    ths[4].innerText = datas[3];
+  }
+}
+
+// ── PIX ─────────────────────────────────────────────
 window.copiarPix = () => {
   navigator.clipboard.writeText(document.getElementById("pix").innerText)
     .then(()  => alert("Pix copiado!"))
     .catch(() => alert("Chave Pix: " + document.getElementById("pix").innerText));
 };
 
+// ── INIT ────────────────────────────────────────────
 Promise.all([getDoc(caixaRef), getDoc(jogadoresRef)]).then(([cs, js]) => {
   if(js.exists()) renderTabela(js.data().lista || []);
   if(cs.exists()) atualizarFinanceiro(cs.data());
