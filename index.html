@@ -618,7 +618,7 @@ window.confirmarVirarMes = async () => {
 
 function proximosSabados(){
   let hoje = new Date();
-  let mes  = hoje.getMonth() - 1;
+  let mes  = hoje.getMonth() + 0;
   let ano  = hoje.getFullYear();
   if(mes > 11){ mes = 0; ano++; }
 
