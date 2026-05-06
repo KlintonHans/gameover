@@ -60,7 +60,6 @@ body {
   box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 
-/* PC: jogadores ocupa 3 cols, info ocupa 1 col */
 .section-jogadores { grid-column: span 3; overflow-x: auto; }
 .section-info      { grid-column: span 1; }
 
@@ -129,9 +128,39 @@ a:hover { text-decoration:underline; }
 .login-error { color:#f87171; font-size:12px; margin-bottom:8px; display:none; }
 
 /* ── VIRAR MÊS MODAL ── */
-#modalVirarMes .modal-box { max-width:400px; }
-#modalVirarMes h2 { color:#f59e0b; }
-#modalVirarMes p { color:#94a3b8; font-size:13px; margin-bottom:16px; line-height:1.6; }
+#modalVirarMes .modal-box { max-width:440px; }
+#modalVirarMes h2 { color:#f59e0b; margin-bottom:6px; }
+#modalVirarMes .subtitulo { color:#94a3b8; font-size:13px; margin-bottom:20px; }
+
+.form-group { margin-bottom:16px; }
+.form-group label { display:block; font-size:12px; color:#94a3b8; margin-bottom:6px; letter-spacing:0.5px; text-transform:uppercase; }
+.form-group input {
+  width:100%; padding:10px 14px; border-radius:8px;
+  border:1px solid #334155; background:#0f172a;
+  color:white; font-size:15px; outline:none;
+}
+.form-group input:focus { border-color:#f59e0b; }
+.form-group input::placeholder { color:#475569; }
+
+.preview-sabados {
+  background:rgba(0,0,0,0.3);
+  border-radius:8px;
+  padding:12px 16px;
+  margin-bottom:20px;
+  min-height: 48px;
+}
+.preview-sabados .preview-label {
+  font-size:11px; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;
+}
+.preview-datas {
+  display:flex; gap:8px; flex-wrap:wrap;
+}
+.preview-data-tag {
+  background:#1e293b; border:1px solid #334155;
+  border-radius:6px; padding:4px 10px;
+  font-size:13px; font-weight:bold; color:#f59e0b;
+}
+
 .resumo { background:rgba(0,0,0,0.3); border-radius:8px; padding:12px 16px; margin-bottom:20px; font-size:13px; }
 .resumo-row { display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
 .resumo-row:last-child { border:none; }
@@ -141,8 +170,11 @@ a:hover { text-decoration:underline; }
 .btn-row button { flex:1; margin:0; padding:10px; font-size:14px; }
 .btn-amarelo { background:#f59e0b !important; }
 .btn-amarelo:hover { background:#d97706 !important; }
+.btn-amarelo:disabled { background:#334155 !important; }
 .btn-cinza { background:#334155 !important; }
 .btn-cinza:hover { background:#475569 !important; }
+
+.virames-error { color:#f87171; font-size:12px; margin-bottom:12px; display:none; }
 
 /* ── EXTRATO MODAL ── */
 #modalExtrato {
@@ -170,7 +202,6 @@ a:hover { text-decoration:underline; }
   .card { padding:12px; }
   .valor { font-size:20px; }
   .card h3 { font-size:12px; }
-  /* seções ocupam largura total no mobile */
   .section-jogadores, .section-info { grid-column:span 2; }
   .logo { font-size:22px; }
   .tagline { display:none; }
@@ -201,7 +232,8 @@ a:hover { text-decoration:underline; }
 <div id="modalVirarMes" class="modal-overlay">
   <div class="modal-box">
     <h2>🔄 Virar Mês</h2>
-    <p>Esta ação prepara o sistema para o novo mês:</p>
+    <p class="subtitulo">Defina o novo mês e o primeiro sábado do período.</p>
+
     <div class="resumo">
       <div class="resumo-row"><span>✅ Mantém</span><strong>Jogadores cadastrados</strong></div>
       <div class="resumo-row"><span>✅ Mantém</span><strong>Saldo do caixa</strong></div>
@@ -210,9 +242,29 @@ a:hover { text-decoration:underline; }
       <div class="resumo-row"><span>🔄 Zera</span><strong>Presenças</strong></div>
       <div class="resumo-row"><span>🔄 Atualiza</span><strong>Datas das colunas</strong></div>
     </div>
+
+    <div class="form-group">
+      <label>📅 Mês de referência (nome)</label>
+      <input type="text" id="inputMesNome" placeholder="Ex: Maio/2026" oninput="atualizarPreview()"/>
+    </div>
+
+    <div class="form-group">
+      <label>📆 Primeiro sábado do período (DD/MM/AAAA)</label>
+      <input type="text" id="inputPrimeiroSabado" placeholder="Ex: 09/05/2026" oninput="atualizarPreview()" maxlength="10"/>
+    </div>
+
+    <div class="preview-sabados">
+      <div class="preview-label">📋 Sábados que serão usados</div>
+      <div class="preview-datas" id="previewDatas">
+        <span style="color:#475569;font-size:13px;">Preencha o primeiro sábado acima...</span>
+      </div>
+    </div>
+
+    <div class="virames-error" id="virarMesError">Verifique os campos acima.</div>
+
     <div class="btn-row">
       <button class="btn-cinza" onclick="fecharModal('modalVirarMes')">Cancelar</button>
-      <button class="btn-amarelo" onclick="confirmarVirarMes()">Confirmar</button>
+      <button class="btn-amarelo" id="btnConfirmarVirar" onclick="confirmarVirarMes()">Confirmar</button>
     </div>
   </div>
 </div>
@@ -284,10 +336,10 @@ a:hover { text-decoration:underline; }
         <thead>
           <tr id="cabecalhoTabela">
             <th style="text-align:left;">Jogador</th>
-            <th>11/04</th>
-            <th>18/04</th>
-            <th>25/04</th>
-            <th>02/05</th>
+            <th id="th1">-</th>
+            <th id="th2">-</th>
+            <th id="th3">-</th>
+            <th id="th4">-</th>
             <th>Ação</th>
           </tr>
         </thead>
@@ -299,7 +351,7 @@ a:hover { text-decoration:underline; }
     <div class="section-info">
       <h3>🏟 Quadra</h3>
       <div class="info-row"><span>Custo mensal</span><strong>R$ 400</strong></div>
-      <div class="info-row"><span>Vencimento</span><strong>07/05 até 11:59</strong></div>
+      <div class="info-row"><span>Vencimento</span><strong>07/05 até 12:00</strong></div>
       <div class="info-row"><span>Mensalidade por atleta</span><strong>R$ 28</strong></div>
 
       <h3 style="margin-top:24px;">💳 Pix</h3>
@@ -442,7 +494,7 @@ window.abrirExtrato = async () => {
     h.slice().reverse().forEach(item => {
       let cor, sinal, desc;
       if(item.tipo === "entrada"){
-        cor = "#22c55e"; sinal = "+ R$ " + item.valor; desc = "Entrada";
+        cor = "#22c55e"; sinal = "+ R$ " + item.valor; desc = item.descricao || "Entrada";
       } else if(item.tipo === "virames"){
         cor = "#f59e0b"; sinal = ""; desc = item.descricao || "Virada de mês";
       } else {
@@ -478,7 +530,6 @@ function criarLinha(j, idx){
   let presencas = (j.presencas && j.presencas.length === 4) ? j.presencas : ["-","-","-","-"];
   let tr = document.createElement("tr");
 
-  // Nome + pago
   let tdNome = document.createElement("td");
   tdNome.className = "nome";
   let span = document.createElement("span");
@@ -494,7 +545,6 @@ function criarLinha(j, idx){
   tdNome.appendChild(span);
   tr.appendChild(tdNome);
 
-  // Presenças
   presencas.forEach((val, pi) => {
     let td = document.createElement("td");
     td.className = "presenca";
@@ -510,7 +560,6 @@ function criarLinha(j, idx){
     tr.appendChild(td);
   });
 
-  // Remover
   let tdAcao = document.createElement("td");
   let btnRem = document.createElement("button");
   btnRem.innerText    = "✕";
@@ -556,49 +605,130 @@ function atualizarFinanceiro(caixa){
   document.getElementById("barra").style.width    = pct + "%";
 }
 
+// ── CALCULAR 4 SÁBADOS A PARTIR DE UMA DATA ─────────
+function calcularQuatroSabados(dia, mes, ano){
+  // mes aqui é 1-12
+  let datas = [];
+  let d = new Date(ano, mes - 1, dia);
+  for(let i = 0; i < 4; i++){
+    datas.push(
+      String(d.getDate()).padStart(2,"0") + "/" +
+      String(d.getMonth()+1).padStart(2,"0")
+    );
+    d.setDate(d.getDate() + 7);
+  }
+  return datas;
+}
+
+// ── PREVIEW SÁBADOS NO MODAL ─────────────────────────
+window.atualizarPreview = () => {
+  let inputData = document.getElementById("inputPrimeiroSabado").value.trim();
+  let preview   = document.getElementById("previewDatas");
+
+  if(!inputData || inputData.length < 10){
+    preview.innerHTML = '<span style="color:#475569;font-size:13px;">Preencha o primeiro sábado acima...</span>';
+    return;
+  }
+
+  let parsed = parsearData(inputData);
+  if(!parsed){
+    preview.innerHTML = '<span style="color:#f87171;font-size:13px;">Data inválida. Use DD/MM/AAAA</span>';
+    return;
+  }
+
+  let { dia, mes, ano } = parsed;
+  let datas = calcularQuatroSabados(dia, mes, ano);
+  preview.innerHTML = datas.map(d =>
+    '<span class="preview-data-tag">' + d + '</span>'
+  ).join("");
+};
+
+function parsearData(str){
+  // Aceita DD/MM/AAAA
+  let partes = str.split("/");
+  if(partes.length !== 3) return null;
+  let dia = parseInt(partes[0]);
+  let mes = parseInt(partes[1]);
+  let ano = parseInt(partes[2]);
+  if(isNaN(dia) || isNaN(mes) || isNaN(ano)) return null;
+  if(dia < 1 || dia > 31)   return null;
+  if(mes < 1 || mes > 12)   return null;
+  if(ano < 2020 || ano > 2100) return null;
+  return { dia, mes, ano };
+}
+
 // ── VIRAR MÊS ───────────────────────────────────────
 window.virarMes = () => {
   if(!isAdmin) return;
+  // Limpa campos ao abrir
+  document.getElementById("inputMesNome").value = "";
+  document.getElementById("inputPrimeiroSabado").value = "";
+  document.getElementById("previewDatas").innerHTML =
+    '<span style="color:#475569;font-size:13px;">Preencha o primeiro sábado acima...</span>';
+  document.getElementById("virarMesError").style.display = "none";
   document.getElementById("modalVirarMes").classList.add("show");
 };
 
 window.confirmarVirarMes = async () => {
   if(!isAdmin) return;
 
-  // Calcula total a ser salvo
-  let lista  = await getJogadores();
-  let pagos  = lista.filter(j => j.pago).length;
-  let total  = pagos * mensalidade;
+  let mesNome   = document.getElementById("inputMesNome").value.trim();
+  let inputData = document.getElementById("inputPrimeiroSabado").value.trim();
+  let errEl     = document.getElementById("virarMesError");
+  errEl.style.display = "none";
 
-  // Pede descrição para a entrada
+  // Validações
+  if(!mesNome){
+    errEl.innerText = "Informe o mês de referência (ex: Junho/2026)";
+    errEl.style.display = "block"; return;
+  }
+
+  let parsed = parsearData(inputData);
+  if(!parsed){
+    errEl.innerText = "Data do primeiro sábado inválida. Use DD/MM/AAAA";
+    errEl.style.display = "block"; return;
+  }
+
+  let { dia, mes, ano } = parsed;
+  let datas = calcularQuatroSabados(dia, mes, ano);
+
+  // Pede descrição da entrada
+  let lista = await getJogadores();
+  let pagos = lista.filter(j => j.pago).length;
+  let total = pagos * mensalidade;
+
   let descricao = prompt(
     "Descrição da entrada de mensalidades:\n" +
-    "Ex: Ref. Março/2026\n\n" +
-    pagos + " jogador(es) pagaram → R$ " + total
+    "Ex: Ref. " + mesNome + "\n\n" +
+    pagos + " jogador(es) pagaram → R$ " + total + "\n" +
+    "(Pressione Cancelar para não lançar entrada)"
   );
-  if(!descricao) return; // cancelou
 
-  let novasDatas = proximosSabados();
   let c = await getCaixa();
   if(!c.historico) c.historico = [];
 
-  // Salva entrada automática no caixa (somente se houve pagamentos)
-  if(total > 0){
+  if(descricao !== null && total > 0){
     c.entrada = (c.entrada || 0) + total;
     c.historico.push({
       tipo: "entrada",
       valor: total,
-      descricao: descricao,
+      descricao: descricao || ("Mensalidades " + mesNome),
       data: new Date().toLocaleString()
     });
   }
 
-  // Registra evento de virada
   c.historico.push({
     tipo: "virames",
-    descricao: "Virada de mês → " + novasDatas.mes + (total > 0 ? " · R$ " + total + " lançados" : " · sem pagamentos"),
+    descricao: "Virada de mês → " + mesNome +
+      " · Sábados: " + datas.join(", ") +
+      (descricao !== null && total > 0 ? " · R$ " + total + " lançados" : ""),
     data: new Date().toLocaleString()
   });
+
+  // Salva referência do mês no Firebase (para fins de registro)
+  c.mesAtualNome = mesNome;
+  c.sabadosAtuais = datas;
+
   await setDoc(caixaRef, c);
 
   // Zera pagamentos e presenças
@@ -606,46 +736,22 @@ window.confirmarVirarMes = async () => {
   await setDoc(jogadoresRef, { lista });
 
   // Atualiza cabeçalhos
-  atualizarCabecalhos(novasDatas.datas);
+  atualizarCabecalhos(datas);
 
   fecharModal("modalVirarMes");
   alert(
-    "✅ Mês virado para " + novasDatas.mes + "!\n" +
-    (total > 0 ? "💰 R$ " + total + " lançados como entrada (" + descricao + ")\n" : "") +
+    "✅ Mês virado para " + mesNome + "!\n" +
+    "📅 Sábados: " + datas.join(", ") + "\n" +
+    (descricao !== null && total > 0 ? "💰 R$ " + total + " lançados\n" : "") +
     "🔄 Pagamentos e presenças zerados."
   );
 };
 
-function proximosSabados(){
-  let hoje = new Date();
-  let mes  = hoje.getMonth();
-  let ano  = hoje.getFullYear();
-  if(mes > 11){ mes = 0; ano++; }
-
-  let sabados = [];
-  let d = new Date(ano, mes, 1);
-  while(d.getMonth() === mes){
-    if(d.getDay() === 6) sabados.push(new Date(d));
-    d.setDate(d.getDate() + 1);
-  }
-  while(sabados.length < 4) sabados.push(sabados[sabados.length - 1]);
-
-  let datas = sabados.slice(0,4).map(s =>
-    String(s.getDate()).padStart(2,"0") + "/" + String(s.getMonth()+1).padStart(2,"0")
-  );
-  let nomes = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-  return { datas, mes: nomes[mes] + "/" + ano };
-}
-
 function atualizarCabecalhos(datas){
-  // Usa id do tr do cabeçalho para selecionar com precisão
-  let ths = document.querySelectorAll("#cabecalhoTabela th");
-  if(ths.length >= 5){
-    ths[1].innerText = datas[0];
-    ths[2].innerText = datas[1];
-    ths[3].innerText = datas[2];
-    ths[4].innerText = datas[3];
-  }
+  document.getElementById("th1").innerText = datas[0] || "-";
+  document.getElementById("th2").innerText = datas[1] || "-";
+  document.getElementById("th3").innerText = datas[2] || "-";
+  document.getElementById("th4").innerText = datas[3] || "-";
 }
 
 // ── PIX ─────────────────────────────────────────────
@@ -658,7 +764,14 @@ window.copiarPix = () => {
 // ── INIT ────────────────────────────────────────────
 Promise.all([getDoc(caixaRef), getDoc(jogadoresRef)]).then(([cs, js]) => {
   if(js.exists()) renderTabela(js.data().lista || []);
-  if(cs.exists()) atualizarFinanceiro(cs.data());
+  if(cs.exists()){
+    let c = cs.data();
+    atualizarFinanceiro(c);
+    // Restaura cabeçalhos salvos no Firebase
+    if(c.sabadosAtuais && c.sabadosAtuais.length === 4){
+      atualizarCabecalhos(c.sabadosAtuais);
+    }
+  }
   document.getElementById("loading").style.display = "none";
 }).catch(() => {
   document.getElementById("loading").innerText = "❌ Erro ao conectar com Firebase.";
