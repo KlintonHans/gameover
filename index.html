@@ -75,13 +75,49 @@ body {
 .progress-bar { height:100%; background:#22c55e; border-radius:20px; width:0%; transition:width 0.4s ease; }
 
 /* ── TABLE ── */
-table { width:100%; border-collapse:collapse; margin-top:10px; min-width:460px; }
+table { width:100%; border-collapse:collapse; margin-top:10px; min-width:540px; }
 th, td { padding:9px 8px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.07); font-size:13px; }
 th { color:#22c55e; font-size:11px; letter-spacing:1px; text-transform:uppercase; }
 td.nome { text-align:left; }
 .jogador { cursor:pointer; }
 .pago { color:#22c55e; }
 .presenca { cursor:pointer; font-size:16px; }
+
+/* ── % PRESENÇA ── */
+td.pct-cell { font-weight:bold; font-size:12px; }
+
+/* ── LINHA TOTAIS ── */
+tfoot tr td {
+  border-top: 2px solid rgba(255,255,255,0.15);
+  border-bottom: none;
+  background: rgba(34,197,94,0.06);
+  font-size: 12px;
+  font-weight: bold;
+  padding-top: 11px;
+  padding-bottom: 11px;
+}
+tfoot tr td.lbl-totais {
+  text-align: left;
+  color: #94a3b8;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-weight: normal;
+}
+.count-badge {
+  display: inline-block;
+  background: #22c55e;
+  color: #000;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 99px;
+  padding: 2px 10px;
+  min-width: 28px;
+}
+.count-badge.zero {
+  background: rgba(255,255,255,0.08);
+  color: #475569;
+}
 
 /* ── INFO ROWS ── */
 .info-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:13px; color:#94a3b8; }
@@ -152,9 +188,7 @@ a:hover { text-decoration:underline; }
 .preview-sabados .preview-label {
   font-size:11px; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;
 }
-.preview-datas {
-  display:flex; gap:8px; flex-wrap:wrap;
-}
+.preview-datas { display:flex; gap:8px; flex-wrap:wrap; }
 .preview-data-tag {
   background:#1e293b; border:1px solid #334155;
   border-radius:6px; padding:4px 10px;
@@ -173,7 +207,6 @@ a:hover { text-decoration:underline; }
 .btn-amarelo:disabled { background:#334155 !important; }
 .btn-cinza { background:#334155 !important; }
 .btn-cinza:hover { background:#475569 !important; }
-
 .virames-error { color:#f87171; font-size:12px; margin-bottom:12px; display:none; }
 
 /* ── EXTRATO MODAL ── */
@@ -233,7 +266,6 @@ a:hover { text-decoration:underline; }
   <div class="modal-box">
     <h2>🔄 Virar Mês</h2>
     <p class="subtitulo">Defina o novo mês e o primeiro sábado do período.</p>
-
     <div class="resumo">
       <div class="resumo-row"><span>✅ Mantém</span><strong>Jogadores cadastrados</strong></div>
       <div class="resumo-row"><span>✅ Mantém</span><strong>Saldo do caixa</strong></div>
@@ -242,26 +274,21 @@ a:hover { text-decoration:underline; }
       <div class="resumo-row"><span>🔄 Zera</span><strong>Presenças</strong></div>
       <div class="resumo-row"><span>🔄 Atualiza</span><strong>Datas das colunas</strong></div>
     </div>
-
     <div class="form-group">
       <label>📅 Mês de referência (nome)</label>
       <input type="text" id="inputMesNome" placeholder="Ex: Maio/2026" oninput="atualizarPreview()"/>
     </div>
-
     <div class="form-group">
       <label>📆 Primeiro sábado do período (DD/MM/AAAA)</label>
       <input type="text" id="inputPrimeiroSabado" placeholder="Ex: 09/05/2026" oninput="atualizarPreview()" maxlength="10"/>
     </div>
-
     <div class="preview-sabados">
       <div class="preview-label">📋 Sábados que serão usados</div>
       <div class="preview-datas" id="previewDatas">
         <span style="color:#475569;font-size:13px;">Preencha o primeiro sábado acima...</span>
       </div>
     </div>
-
     <div class="virames-error" id="virarMesError">Verifique os campos acima.</div>
-
     <div class="btn-row">
       <button class="btn-cinza" onclick="fecharModal('modalVirarMes')">Cancelar</button>
       <button class="btn-amarelo" id="btnConfirmarVirar" onclick="confirmarVirarMes()">Confirmar</button>
@@ -326,7 +353,6 @@ a:hover { text-decoration:underline; }
       <p id="progressLabel" style="margin-top:6px;">0 de 0 pagos</p>
     </div>
 
-    <!-- Jogadores: 3 cols PC / full mobile -->
     <div class="section-jogadores">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
         <h3 style="margin:0;">👥 Jogadores / Presença</h3>
@@ -334,20 +360,21 @@ a:hover { text-decoration:underline; }
       </div>
       <table>
         <thead>
-          <tr id="cabecalhoTabela">
+          <tr>
             <th style="text-align:left;">Jogador</th>
             <th id="th1">-</th>
             <th id="th2">-</th>
             <th id="th3">-</th>
             <th id="th4">-</th>
+            <th>%</th>
             <th>Ação</th>
           </tr>
         </thead>
         <tbody id="tabelaBody"></tbody>
+        <tfoot id="tabelaFoot"></tfoot>
       </table>
     </div>
 
-    <!-- Info + Pix: 1 col PC / full mobile -->
     <div class="section-info">
       <h3>🏟 Quadra</h3>
       <div class="info-row"><span>Custo mensal</span><strong>R$ 400</strong></div>
@@ -367,7 +394,6 @@ import { initializeApp }                               from "https://www.gstatic
 import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-// ── CONFIG ──────────────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyCXfa8We_LZvheRJW763NRUfPqryqg84YA",
   authDomain: "klintonhansgameover.firebaseapp.com",
@@ -388,7 +414,6 @@ let isAdmin = false;
 const caixaRef     = doc(db, "gameover", "caixa");
 const jogadoresRef = doc(db, "gameover", "jogadores");
 
-// ── HELPERS MODAL ───────────────────────────────────
 window.fecharModal = (id) => document.getElementById(id).classList.remove("show");
 
 // ── AUTH ────────────────────────────────────────────
@@ -441,17 +466,15 @@ async function getCaixa(){
   let snap = await getDoc(caixaRef);
   return snap.exists() ? snap.data() : { entrada:0, saida:0, ultimaSaida:"", historico:[] };
 }
-
 async function getJogadores(){
   let snap = await getDoc(jogadoresRef);
   return snap.exists() ? (snap.data().lista || []) : [];
 }
 
-// ── LISTENERS TEMPO REAL ────────────────────────────
+// ── LISTENERS ───────────────────────────────────────
 onSnapshot(caixaRef, snap => {
   if(snap.exists()) atualizarFinanceiro(snap.data());
 });
-
 onSnapshot(jogadoresRef, snap => {
   if(snap.exists()) renderTabela(snap.data().lista || []);
 });
@@ -514,28 +537,57 @@ window.abrirExtrato = async () => {
   }
   document.getElementById("modalExtrato").style.display = "block";
 };
-
 window.fecharExtrato = () => document.getElementById("modalExtrato").style.display = "none";
 
-// ── TABELA JOGADORES ────────────────────────────────
+// ── % PRESENÇA ──────────────────────────────────────
+function calcPct(presencas){
+  if(!presencas) return null;
+  let definidas = presencas.filter(p => p === "✔" || p === "✘").length;
+  if(!definidas) return null;
+  return Math.round(presencas.filter(p => p === "✔").length / definidas * 100);
+}
+
+// ── TABELA ──────────────────────────────────────────
 function renderTabela(lista){
   let tbody = document.getElementById("tabelaBody");
+  let tfoot = document.getElementById("tabelaFoot");
   tbody.innerHTML = "";
-  lista.forEach((j, idx) => tbody.appendChild(criarLinha(j, idx)));
+  tfoot.innerHTML = "";
+
+  // Ordena por % decrescente; sem dados vai pro final
+  let ordenados = lista
+    .map((j, i) => ({ j, i }))
+    .sort((a, b) => {
+      let pa = calcPct(a.j.presencas), pb = calcPct(b.j.presencas);
+      if(pa === null && pb === null) return 0;
+      if(pa === null) return 1;
+      if(pb === null) return -1;
+      if(pb !== pa) return pb - pa;
+      // desempate por presenças absolutas
+      let absA = (a.j.presencas||[]).filter(p=>p==="✔").length;
+      let absB = (b.j.presencas||[]).filter(p=>p==="✔").length;
+      return absB - absA;
+    });
+
+  ordenados.forEach(({ j, i }) => tbody.appendChild(criarLinha(j, i)));
+  tfoot.appendChild(criarLinhaTotais(lista));
+
   setBotoesAdmin(isAdmin);
   getDoc(caixaRef).then(s => atualizarFinanceiro(s.exists() ? s.data() : {}));
 }
 
 function criarLinha(j, idx){
   let presencas = (j.presencas && j.presencas.length === 4) ? j.presencas : ["-","-","-","-"];
-  let tr = document.createElement("tr");
+  let pct = calcPct(presencas);
+  let tr  = document.createElement("tr");
 
+  // Nome
   let tdNome = document.createElement("td");
   tdNome.className = "nome";
   let span = document.createElement("span");
-  span.className   = "jogador" + (j.pago ? " pago" : "");
+  span.className    = "jogador" + (j.pago ? " pago" : "");
   span.dataset.nome = j.nome;
-  span.innerText   = (j.pago ? "✔ " : "") + j.nome;
+  span.innerText    = (j.pago ? "✔ " : "") + j.nome;
   span.onclick = async () => {
     if(!isAdmin) return;
     let novo = await getJogadores();
@@ -545,6 +597,7 @@ function criarLinha(j, idx){
   tdNome.appendChild(span);
   tr.appendChild(tdNome);
 
+  // Dots de presença
   presencas.forEach((val, pi) => {
     let td = document.createElement("td");
     td.className = "presenca";
@@ -560,11 +613,24 @@ function criarLinha(j, idx){
     tr.appendChild(td);
   });
 
+  // % presença
+  let tdPct = document.createElement("td");
+  tdPct.className = "pct-cell";
+  if(pct === null){
+    tdPct.style.color = "#475569";
+    tdPct.innerText   = "—";
+  } else {
+    tdPct.style.color = pct >= 75 ? "#22c55e" : pct >= 50 ? "#f59e0b" : "#f87171";
+    tdPct.innerText   = pct + "%";
+  }
+  tr.appendChild(tdPct);
+
+  // Ação
   let tdAcao = document.createElement("td");
   let btnRem = document.createElement("button");
-  btnRem.innerText    = "✕";
+  btnRem.innerText     = "✕";
   btnRem.style.cssText = "margin:0;padding:4px 8px;font-size:12px;background:#ef4444;";
-  btnRem.disabled     = !isAdmin;
+  btnRem.disabled      = !isAdmin;
   btnRem.onclick = async () => {
     if(!isAdmin || !confirm("Remover " + j.nome + "?")) return;
     let novo = await getJogadores();
@@ -573,6 +639,31 @@ function criarLinha(j, idx){
   };
   tdAcao.appendChild(btnRem);
   tr.appendChild(tdAcao);
+  return tr;
+}
+
+// ── LINHA TOTAIS POR DATA ────────────────────────────
+function criarLinhaTotais(lista){
+  let tr = document.createElement("tr");
+
+  let tdLbl = document.createElement("td");
+  tdLbl.className = "lbl-totais";
+  tdLbl.innerText = "Presentes";
+  tr.appendChild(tdLbl);
+
+  for(let pi = 0; pi < 4; pi++){
+    let count = lista.filter(j => (j.presencas && j.presencas[pi]) === "✔").length;
+    let td = document.createElement("td");
+    let badge = document.createElement("span");
+    badge.className = "count-badge" + (count === 0 ? " zero" : "");
+    badge.innerText = count;
+    td.appendChild(badge);
+    tr.appendChild(td);
+  }
+
+  // colunas % e ação vazias
+  tr.appendChild(document.createElement("td"));
+  tr.appendChild(document.createElement("td"));
   return tr;
 }
 
@@ -587,8 +678,8 @@ window.adicionarJogador = async () => {
 
 // ── FINANCEIRO ──────────────────────────────────────
 function atualizarFinanceiro(caixa){
-  let jogEls      = document.querySelectorAll(".jogador");
-  let pagos       = Array.from(jogEls).filter(el => el.classList.contains("pago")).length;
+  let jogEls       = document.querySelectorAll(".jogador");
+  let pagos        = Array.from(jogEls).filter(el => el.classList.contains("pago")).length;
   let entradaTotal = (pagos * mensalidade) + (caixa.entrada || 0);
   let saidaTotal   = custoQuadra + (caixa.saida || 0);
 
@@ -605,146 +696,84 @@ function atualizarFinanceiro(caixa){
   document.getElementById("barra").style.width    = pct + "%";
 }
 
-// ── CALCULAR 4 SÁBADOS A PARTIR DE UMA DATA ─────────
+// ── SÁBADOS ─────────────────────────────────────────
 function calcularQuatroSabados(dia, mes, ano){
-  // mes aqui é 1-12
-  let datas = [];
-  let d = new Date(ano, mes - 1, dia);
+  let datas = [], d = new Date(ano, mes - 1, dia);
   for(let i = 0; i < 4; i++){
-    datas.push(
-      String(d.getDate()).padStart(2,"0") + "/" +
-      String(d.getMonth()+1).padStart(2,"0")
-    );
+    datas.push(String(d.getDate()).padStart(2,"0") + "/" + String(d.getMonth()+1).padStart(2,"0"));
     d.setDate(d.getDate() + 7);
   }
   return datas;
 }
 
-// ── PREVIEW SÁBADOS NO MODAL ─────────────────────────
 window.atualizarPreview = () => {
   let inputData = document.getElementById("inputPrimeiroSabado").value.trim();
   let preview   = document.getElementById("previewDatas");
-
   if(!inputData || inputData.length < 10){
     preview.innerHTML = '<span style="color:#475569;font-size:13px;">Preencha o primeiro sábado acima...</span>';
     return;
   }
-
   let parsed = parsearData(inputData);
   if(!parsed){
     preview.innerHTML = '<span style="color:#f87171;font-size:13px;">Data inválida. Use DD/MM/AAAA</span>';
     return;
   }
-
-  let { dia, mes, ano } = parsed;
-  let datas = calcularQuatroSabados(dia, mes, ano);
-  preview.innerHTML = datas.map(d =>
-    '<span class="preview-data-tag">' + d + '</span>'
-  ).join("");
+  let datas = calcularQuatroSabados(parsed.dia, parsed.mes, parsed.ano);
+  preview.innerHTML = datas.map(d => '<span class="preview-data-tag">' + d + '</span>').join("");
 };
 
 function parsearData(str){
-  // Aceita DD/MM/AAAA
-  let partes = str.split("/");
-  if(partes.length !== 3) return null;
-  let dia = parseInt(partes[0]);
-  let mes = parseInt(partes[1]);
-  let ano = parseInt(partes[2]);
-  if(isNaN(dia) || isNaN(mes) || isNaN(ano)) return null;
-  if(dia < 1 || dia > 31)   return null;
-  if(mes < 1 || mes > 12)   return null;
-  if(ano < 2020 || ano > 2100) return null;
-  return { dia, mes, ano };
+  let p = str.split("/");
+  if(p.length !== 3) return null;
+  let dia = parseInt(p[0]), mes = parseInt(p[1]), ano = parseInt(p[2]);
+  if(isNaN(dia)||isNaN(mes)||isNaN(ano)) return null;
+  if(dia<1||dia>31||mes<1||mes>12||ano<2020||ano>2100) return null;
+  return {dia, mes, ano};
 }
 
 // ── VIRAR MÊS ───────────────────────────────────────
 window.virarMes = () => {
   if(!isAdmin) return;
-  // Limpa campos ao abrir
   document.getElementById("inputMesNome").value = "";
   document.getElementById("inputPrimeiroSabado").value = "";
-  document.getElementById("previewDatas").innerHTML =
-    '<span style="color:#475569;font-size:13px;">Preencha o primeiro sábado acima...</span>';
+  document.getElementById("previewDatas").innerHTML = '<span style="color:#475569;font-size:13px;">Preencha o primeiro sábado acima...</span>';
   document.getElementById("virarMesError").style.display = "none";
   document.getElementById("modalVirarMes").classList.add("show");
 };
 
 window.confirmarVirarMes = async () => {
   if(!isAdmin) return;
-
   let mesNome   = document.getElementById("inputMesNome").value.trim();
   let inputData = document.getElementById("inputPrimeiroSabado").value.trim();
   let errEl     = document.getElementById("virarMesError");
   errEl.style.display = "none";
-
-  // Validações
-  if(!mesNome){
-    errEl.innerText = "Informe o mês de referência (ex: Junho/2026)";
-    errEl.style.display = "block"; return;
-  }
-
+  if(!mesNome){ errEl.innerText="Informe o mês de referência."; errEl.style.display="block"; return; }
   let parsed = parsearData(inputData);
-  if(!parsed){
-    errEl.innerText = "Data do primeiro sábado inválida. Use DD/MM/AAAA";
-    errEl.style.display = "block"; return;
-  }
-
-  let { dia, mes, ano } = parsed;
-  let datas = calcularQuatroSabados(dia, mes, ano);
-
-  // Pede descrição da entrada
+  if(!parsed){ errEl.innerText="Data inválida. Use DD/MM/AAAA"; errEl.style.display="block"; return; }
+  let datas = calcularQuatroSabados(parsed.dia, parsed.mes, parsed.ano);
   let lista = await getJogadores();
   let pagos = lista.filter(j => j.pago).length;
   let total = pagos * mensalidade;
-
   let descricao = prompt(
-    "Descrição da entrada de mensalidades:\n" +
-    "Ex: Ref. " + mesNome + "\n\n" +
-    pagos + " jogador(es) pagaram → R$ " + total + "\n" +
-    "(Pressione Cancelar para não lançar entrada)"
+    "Descrição da entrada de mensalidades:\nEx: Ref. " + mesNome +
+    "\n\n" + pagos + " jogador(es) pagaram → R$ " + total +
+    "\n(Cancelar = não lançar entrada)"
   );
-
   let c = await getCaixa();
   if(!c.historico) c.historico = [];
-
   if(descricao !== null && total > 0){
-    c.entrada = (c.entrada || 0) + total;
-    c.historico.push({
-      tipo: "entrada",
-      valor: total,
-      descricao: descricao || ("Mensalidades " + mesNome),
-      data: new Date().toLocaleString()
-    });
+    c.entrada = (c.entrada||0) + total;
+    c.historico.push({ tipo:"entrada", valor:total, descricao: descricao||("Mensalidades "+mesNome), data:new Date().toLocaleString() });
   }
-
-  c.historico.push({
-    tipo: "virames",
-    descricao: "Virada de mês → " + mesNome +
-      " · Sábados: " + datas.join(", ") +
-      (descricao !== null && total > 0 ? " · R$ " + total + " lançados" : ""),
-    data: new Date().toLocaleString()
-  });
-
-  // Salva referência do mês no Firebase (para fins de registro)
-  c.mesAtualNome = mesNome;
+  c.historico.push({ tipo:"virames", descricao:"Virada → "+mesNome+" · "+datas.join(", ")+(descricao!==null&&total>0?" · R$ "+total:""), data:new Date().toLocaleString() });
+  c.mesAtualNome  = mesNome;
   c.sabadosAtuais = datas;
-
   await setDoc(caixaRef, c);
-
-  // Zera pagamentos e presenças
   lista = lista.map(j => ({ ...j, pago:false, presencas:["-","-","-","-"] }));
   await setDoc(jogadoresRef, { lista });
-
-  // Atualiza cabeçalhos
   atualizarCabecalhos(datas);
-
   fecharModal("modalVirarMes");
-  alert(
-    "✅ Mês virado para " + mesNome + "!\n" +
-    "📅 Sábados: " + datas.join(", ") + "\n" +
-    (descricao !== null && total > 0 ? "💰 R$ " + total + " lançados\n" : "") +
-    "🔄 Pagamentos e presenças zerados."
-  );
+  alert("✅ Mês virado para " + mesNome + "!\n📅 " + datas.join(", ") + "\n🔄 Pagamentos e presenças zerados.");
 };
 
 function atualizarCabecalhos(datas){
@@ -767,16 +796,12 @@ Promise.all([getDoc(caixaRef), getDoc(jogadoresRef)]).then(([cs, js]) => {
   if(cs.exists()){
     let c = cs.data();
     atualizarFinanceiro(c);
-    // Restaura cabeçalhos salvos no Firebase
-    if(c.sabadosAtuais && c.sabadosAtuais.length === 4){
-      atualizarCabecalhos(c.sabadosAtuais);
-    }
+    if(c.sabadosAtuais && c.sabadosAtuais.length === 4) atualizarCabecalhos(c.sabadosAtuais);
   }
   document.getElementById("loading").style.display = "none";
 }).catch(() => {
   document.getElementById("loading").innerText = "❌ Erro ao conectar com Firebase.";
 });
-
 </script>
 </body>
 </html>
